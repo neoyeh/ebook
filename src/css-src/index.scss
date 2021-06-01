@@ -1,0 +1,64 @@
+@import 'lib/reset';
+@import 'lib/variables';
+@import 'lib/mixins';
+@import 'lib/font-awesome/scss/font-awesome';
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+body{
+  font-family: 'Noto Sans TC','Roboto', 'sans-serif';
+  overflow: initial !important;
+}
+
+.section-master{
+  position: relative;
+  height: 100vh;
+  // height: calc(var(--vh, 1vh) * 100);
+  width: 100%;
+  .control-nav-tool{
+    .prev,
+    .next{
+      position: fixed; 
+      height: 100vh;
+      // height: calc(var(--vh, 1vh) * 100);
+      width: 50px;
+      background-color: #f00;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .prev{
+      left: 0;
+    }
+    .next{
+      right: 0;
+    }
+  }
+  .master-tool{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    z-index: 10;
+    padding: 10px 20px;
+    .tool-button{
+      width: 60px;
+      height: 60px;
+      border-radius: 4px;
+      border: 2px solid #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      i{
+        display: inline-block;
+        font-size: 30px;
+      }
+    }
+  }
+}
