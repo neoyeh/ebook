@@ -8,19 +8,29 @@
 body{
   font-family: 'Noto Sans TC','Roboto', 'sans-serif';
   overflow: initial !important;
+  background-color: #000;
 }
 
 .section-master{
+  background-color: #fff;
   position: relative;
   height: 100vh;
-  // height: calc(var(--vh, 1vh) * 100);
+  height: calc(var(--vh, 1vh) * 100);
   width: 100%;
+  .master-block{
+    position: relative;
+    .image-block{
+      img{
+
+      }
+    }
+  }
   .control-nav-tool{
     .prev,
     .next{
       position: fixed; 
       height: 100vh;
-      // height: calc(var(--vh, 1vh) * 100);
+      height: calc(var(--vh, 1vh) * 100);
       width: 50px;
       background-color: #f00;
       top: 0;
