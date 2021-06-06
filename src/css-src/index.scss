@@ -2,11 +2,10 @@
 @import 'lib/variables';
 @import 'lib/mixins';
 @import 'lib/font-awesome/scss/font-awesome';
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+
 body{
-  font-family: 'Noto Sans TC','Roboto', 'sans-serif';
+  font-family: 'Microsoft JhengHei','Roboto', 'sans-serif';
   overflow: initial !important;
   background-color: #000;
 }
@@ -17,33 +16,19 @@ body{
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
   width: 100%;
+  overflow: hidden;
   .master-block{
     position: relative;
-    .image-block{
-      img{
-
-      }
-    }
-  }
-  .control-nav-tool{
-    .prev,
-    .next{
-      position: fixed; 
-      height: 100vh;
-      height: calc(var(--vh, 1vh) * 100);
-      width: 50px;
-      background-color: #f00;
-      top: 0;
-      z-index: 20;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .prev{
-      left: 0;
-    }
-    .next{
-      right: 0;
+    height: calc( 100vh - 80px );
+    height: calc(var(--vh, 1vh) * 100 - 80px);
+    .canvas-editor{
+      width: 600px;
+      height: 600px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
     }
   }
   .master-tool{
@@ -71,4 +56,33 @@ body{
       }
     }
   }
+  .control-nav-tool{
+    .prev,
+    .next{
+      position: fixed; 
+      height: 100vh;
+      height: calc(var(--vh, 1vh) * 100);
+      width: 50px;
+      background-color: #f00;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .prev{
+      left: 0;
+    }
+    .next{
+      right: 0;
+    }
+  }
+}
+
+.tooltip-container{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
 }

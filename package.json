@@ -5,12 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack -p",
-    "eslintInit": "eslint --init",
-    "lint": "eslint src/*.js",
     "build-css": "node-sass -r src/css-src -o dist/css",
     "start": "webpack-dev-server",
-    "test": "jest",
-    "test-cov": "jest --coverage",
     "png-to-jpg": "node webpack.config.png-to-jpg"
   },
   "keywords": [],
@@ -49,6 +45,7 @@
     "@babel/polyfill": "^7.8.7",
     "browser-sync": "^2.26.14",
     "canvas": "^2.8.0",
+    "fabric": "^4.5.0",
     "imagemin": "^7.0.1",
     "imagemin-mozjpeg": "^9.0.0",
     "imagemin-pngquant": "^9.0.1",
