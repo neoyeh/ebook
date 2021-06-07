@@ -210,52 +210,88 @@ const drawerFunction = (function () {
 
 
 
-const LCFunction = (function () {
+const fabricFunction = (function () {
     'use strict';
-    let lc;
-    let LCFunction = {
+    let card;
+    let fabricFunction = {
         imageSize: null,
         imageUrl: null,
         init: function () {
-            let LCFunctionSection = $('.canvas-editor');
-            if (LCFunctionSection.length > 0) {
-                $.each(LCFunctionSection, function (index, val) {
+            let fabricFunctionSection = $('.fabric-canvas');
+            if (fabricFunctionSection.length > 0) {
+                $.each(fabricFunctionSection, function (index, val) {
                     let currentSection = $(this);
-                    LCFunction.initPlugin(currentSection);
+                    fabricFunction.initPlugin(currentSection);
                     $(window).resize(function () {
                     });
                 });
             }
         },
         initPlugin: function (parentElement) {
+            card = new fabric.Canvas('fabric-canvas');
+            fabricFunction.initImage(parentElement, './img/test.jpg');
+            // card.on('object:modified', (e) => {
+            //     console.log(e.target) // e.target為當前編輯的Object
+            //     // ...旋轉，縮放，移動等編輯圖層的操作都監聽到
+            //     // 所以如果有撤銷/恢復的場景，這裡可以保存編輯狀態
+            // });
+            
             $(window).resize(function () {
+                fabricFunction.resetSize(parentElement);
             });
         },
         initImage: function(parentElement, url){
             const img = new Image();
             img.onload = function() {
-                LCFunction.imageSize = {
+                fabricFunction.imageUrl = url;
+                fabricFunction.imageSize = {
                     width: this.width,
                     height: this.height,
                 };
+                fabricFunction.resetSize(parentElement, url);
             }
             img.src = url;
 
             
         },
         resetSize: function(parentElement, url){
-            
+            const imageUrl = (url)?url:fabricFunction.imageUrl;
+            const windowW = window.innerWidth;
+            const windowH = window.innerHeight-80;
+            const imageRatio = fabricFunction.imageSize.width/fabricFunction.imageSize.height;
+            const windowRatio = windowW/windowH;
+            const finialRatio = ( imageRatio > windowRatio )?windowW/fabricFunction.imageSize.width : windowH/fabricFunction.imageSize.height;
+            // parentElement.css({
+            //     width: finialRatio*fabricFunction.imageSize.width,
+            //     height: finialRatio*fabricFunction.imageSize.height
+            // });
+            card.setWidth(finialRatio*fabricFunction.imageSize.width);
+            card.setHeight(finialRatio*fabricFunction.imageSize.height);
+            card.setBackgroundImage(imageUrl, card.renderAll.bind(card), {
+                // width: finialRatio*fabricFunction.imageSize.width,
+                // height: finialRatio*fabricFunction.imageSize.height,
+                scaleX: finialRatio,
+                scaleY: finialRatio,
+            });
+            // fabric.Image.fromURL(imageUrl, (img) => {
+            //     img.set({
+            //         scaleX: finialRatio,
+            //         scaleY: finialRatio,
+            //     });
+            //     card.setBackgroundImage(img, card.renderAll.bind(card));
+            //     card.renderAll();
+            // });
         }
     }
 
-    return LCFunction;
+    return fabricFunction;
 }());
 
 window.onload = () => {
     fullHeight.init();
 
     // drawerFunction.init();
-    // LCFunction.init();
+    fabricFunction.init();
 
 
 };
