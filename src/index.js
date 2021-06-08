@@ -228,14 +228,21 @@ const fabricFunction = (function () {
             }
         },
         initPlugin: function (parentElement) {
-            card = new fabric.Canvas('fabric-canvas');
+            card = new fabric.Canvas('fabric-canvas',{
+                isDrawingMode: true
+            });
             fabricFunction.initImage(parentElement, './img/test.jpg');
             // card.on('object:modified', (e) => {
             //     console.log(e.target) // e.target為當前編輯的Object
             //     // ...旋轉，縮放，移動等編輯圖層的操作都監聽到
             //     // 所以如果有撤銷/恢復的場景，這裡可以保存編輯狀態
             // });
-            
+            document.getElementById('btn-clear').addEventListener('click', () => {
+                if(confirm('確定要清除所有筆記?')){
+                    card.clear();
+                    fabricFunction.resetSize(parentElement);
+                }
+            });
             $(window).resize(function () {
                 fabricFunction.resetSize(parentElement);
             });
@@ -304,7 +311,7 @@ $(document).ready(function () {
     const element = document.getElementById('section-master');
     document.getElementById('btn-fullscreen').addEventListener('click', () => {
         if (screenfull.isEnabled) {
-            screenfull.request(element);
+            screenfull.toggle(element);
         }
     });
 });
