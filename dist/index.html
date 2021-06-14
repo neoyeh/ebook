@@ -26,17 +26,29 @@
 
             </div>
             <div class="master-tool">
+                <div class="tool-button" id="btn-save">
+                    <i class="fa fa-caret-square-o-down" aria-hidden="true"></i>
+                    <div>存檔</div>
+                </div>
                 <div class="tool-button" id="btn-pencil">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <div>色筆</div>
                 </div>
                 <div class="tool-button" id="btn-fullscreen">
                     <i class="fa fa-arrows-alt" aria-hidden="true"></i>
-                </div>
-                <div class="tool-button" id="btn-save">
-                    <i class="fa fa-caret-square-o-down" aria-hidden="true"></i>
+                    <div>全螢幕</div>
                 </div>
                 <div class="tool-button" id="btn-clear">
+                    <i class="fa fa-laptop" aria-hidden="true"></i>
+                    <div>清空畫布</div>
+                </div>
+                <div class="tool-button" id="btn-select">
+                    <i class="fa fa-hand-lizard-o" aria-hidden="true"></i>
+                    <div>選取模式</div>
+                </div>
+                <div class="tool-button" id="btn-eraser">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    <div>刪除選取筆畫</div>
                 </div>
             </div>
         </section>
@@ -44,28 +56,44 @@
             <div class="popup-modal-card">
                 <div class="card-header">
                     <div>螢光筆</div>
-                    <div class="btn-card-close">
+                    <div class="btn-card-close" id="btn-card-close">
                         <i class="fa fa-times" aria-hidden="true"></i>
                     </div>
                 </div>
                 <div class="card-content">
                     <div class="color-content">
-                        <div class="d-color" data-color="#000000" style="background-color: #000000;"></div>
-                        <div class="d-color" data-color="#0a67a3" style="background-color: #0a67a3;"></div>
-                        <div class="d-color" data-color="#3e97d1" style="background-color: #3e97d1;"></div>
-                        <div class="d-color" data-color="#8ec9ef" style="background-color: #8ec9ef;"></div>
-                        <div class="d-color" data-color="#ff0000" style="background-color: #ff0000;"></div>
-                        <div class="d-color" data-color="#f56c36" style="background-color: #f56c36;"></div>
-                        <div class="d-color" data-color="#f8a881" style="background-color: #f8a881;"></div>
-                        <div class="d-color" data-color="#407f1a" style="background-color: #407f1a;"></div>
+                        <div class="d-color" data-color="0, 0, 0" style="background-color: #000000;"></div>
+                        <div class="d-color" data-color="10, 103, 163" style="background-color: #0a67a3;"></div>
+                        <div class="d-color" data-color="62, 151, 209" style="background-color: #3e97d1;"></div>
+                        <div class="d-color" data-color="142, 201, 239" style="background-color: #8ec9ef;"></div>
+                        <div class="d-color" data-color="255, 0, 0" style="background-color: #ff0000;"></div>
+                        <div class="d-color" data-color="245, 108, 54" style="background-color: #f56c36;"></div>
+                        <div class="d-color" data-color="248, 168, 129" style="background-color: #f8a881;"></div>
+                        <div class="d-color" data-color="64, 127, 26" style="background-color: #407f1a;"></div>
                         <div class="d-color" data-color="#7ed616" style="background-color: #7ed616;"></div>
-                        <div class="d-color" data-color="#ddec38" style="background-color: #ddec38;"></div>
-                        <div class="d-color" data-color="#a15f9d" style="background-color: #a15f9d;"></div>
-                        <div class="d-color" data-color="#f580e3" style="background-color: #f580e3;"></div>
-                        <div class="d-color" data-color="#ffff00" style="background-color: #ffff00;"></div>
-                        <div class="d-color" data-color="#8a5025" style="background-color: #8a5025;"></div>
-                        <div class="d-color" data-color="#ef934d" style="background-color: #ef934d;"></div>
-                        <div class="d-color" data-color="#ffffff" style="background-color: #ffffff;"></div>
+                        <div class="d-color" data-color="126, 214, 22" style="background-color: #ddec38;"></div>
+                        <div class="d-color" data-color="161, 95, 157" style="background-color: #a15f9d;"></div>
+                        <div class="d-color" data-color="245, 128, 227" style="background-color: #f580e3;"></div>
+                        <div class="d-color active" data-color="255, 255, 0" style="background-color: #ffff00;"></div>
+                        <div class="d-color" data-color="138, 80, 37" style="background-color: #8a5025;"></div>
+                        <div class="d-color" data-color="239, 147, 77" style="background-color: #ef934d;"></div>
+                        <div class="d-color" data-color="255, 255, 255" style="background-color: #ffffff;"></div>
+                    </div>
+                    <div class="tool-content">
+                        <div class="input-group">
+                            <label class="input-name" for="v-opacity">透明度</label>
+                            <div class="input-group-content">
+                                <input type="range" value="8" min="2"max="10" id="v-opacity">
+                                <div class="v-value"><span>0.8</span></div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-name" for="v-opacity">筆畫粗細</label>
+                            <div class="input-group-content">
+                                <input type="range" value="10" min="5"max="45" id="v-width">
+                                <div class="v-value"><span>10</span></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -2,7 +2,6 @@
 // const { window } = new JSDOM( "" );
 // const $ = require( "jquery" )( window );
 
-// import './js-src/lib/drawerJs/dist/drawerJs.standalone';
 import { fabric } from "fabric";
 
 
@@ -22,232 +21,70 @@ const fullHeight = {
     }
 };
 
-const drawerFunction = (function () {
-    'use strict';
-
-    let drawerFunction = {
-        imageSize: null,
-        imageUrl: null,
-        init: function () {
-            let drawerFunctionSection = $('.canvas-editor');
-            if (drawerFunctionSection.length > 0) {
-                $.each(drawerFunctionSection, function (index, val) {
-                    let currentSection = $(this);
-                    drawerFunction.initPlugin(currentSection);
-                    $(window).resize(function () {
-                    });
-                });
-            }
-        },
-        initPlugin: function (parentElement) {
-            let drawerPlugins = [
-                // Drawing tools
-                'Pencil',
-                'Eraser',
-                'Line',
-                'BackgroundImage',
-
-                // Drawing options
-                //'ColorHtml5',
-                'Color',
-                'ShapeBorder',
-                'BrushSize',
-                'OpacityOption',
-
-                'LineWidth',
-                'StrokeWidth',
-
-                'ShapeContextMenu',
-                'OvercanvasPopup',
-                'OpenPopupButton',
-                'MinimizeButton',
-                'ToggleVisibilityButton',
-                'MovableFloatingMode',
-
-            ];
-            
-            let localizedTexts  = {
-                'Pencil': '螢光筆',
-                'Eraser': '橡皮擦',
-            }
-
-            // drawer is created as global property solely for debug purposes.
-            // doing  in production is considered as bad practice
-            window.drawer = new DrawerJs.Drawer(null, {
-                plugins: drawerPlugins,
-                texts: localizedTexts,
-                corePlugins: [
-                    'Zoom' // use null here if you want to disable Zoom completely
-                ],
-                pluginsConfig: {
-                    BackgroundImage: {
-                        scaleDownLargeImage: true,
-                        maxImageSizeKb: 30720, //3MB
-                        //fixedBackgroundUrl: '/examples/redactor/images/vanGogh.jpg',
-                        imagePosition: 'stretch',  // one of  'center', 'stretch', 'top-left', 'top-right', 'bottom-left', 'bottom-right'
-                        acceptedMIMETypes: ['image/jpeg', 'image/png', 'image/gif'],
-                        dynamicRepositionImage: true,
-                        dynamicRepositionImageThrottle: 0,
-                        cropIsActive: false
-                    },
-                    'Pencil': {
-                        cursorUrl: 'pencil',
-                        brushSize: 10,
-                    },
-                    Zoom: {
-                        enabled: true,
-                        showZoomTooltip: true,
-                        useWheelEvents: true,
-                        zoomStep: 1.05,
-                        defaultZoom: 1,
-                        maxZoom: 32,
-                        minZoom: 1,
-                        smoothnessOfWheel: 0,
-                        //Moving:
-                        enableMove: true,
-                        enableWhenNoActiveTool: true,
-                        enableButton: true
-                    }
-                },
-                toolbarSize: 55,
-                toolbars: {
-                    drawingTools: {
-                        position: 'bottom',
-                        positionType: 'inside',
-                        customAnchorSelector: '#custom-toolbar-here',
-                        compactType: 'scrollable',
-                        hidden: false,
-                        toggleVisibilityButton: false
-                    },
-                    toolOptions: {
-                        position: 'top',
-                        positionType: 'inside',
-                        compactType: 'popup',
-                        hidden: false,
-                        toggleVisibilityButton: false,
-                        fullscreenMode: {
-                            position: 'bottom',
-                            compactType: 'popup',
-                            hidden: false,
-                            toggleVisibilityButton: false
-                        }
-                    },
-                    settings: {
-                        position: 'right',
-                        positionType: 'inside',
-                        compactType: 'scrollable',
-                        hidden: false,
-                        toggleVisibilityButton: false
-                    }
-                },
-                defaultActivePlugin: { name: 'Pencil', mode: 'lastUsed' },
-                borderCss: 'none',
-                borderCssEditMode: 'none',
-                debug: true,
-                activeColor: '#a1be13',
-                transparentBackground: true,
-                lineAngleTooltip: { enabled: true, color: 'blue', fontSize: 15 }
-            }, 400, 400);
-
-            parentElement.append(window.drawer.getHtml());
-            window.drawer.onInsert();
-
-            drawerFunction.initImage(parentElement, '../img/test.jpg');
-
-            $(window).resize(function () {
-                drawerFunction.resetSize(parentElement);
-            });
-
-
-        },
-        initImage: function(parentElement, url){
-             // initbackground
-            drawerFunction.imageUrl = url;
-            const img = new Image();
-            img.onload = function() {
-                console.log(this.width + 'x' + this.height);
-                drawerFunction.imageSize = {
-                    width: this.width,
-                    height: this.height,
-                }
-                drawerFunction.resetSize(parentElement);
-            }
-            img.src = url;
-        },
-        resetSize: function(parentElement, url){
-            const imageUrl = url?url:drawerFunction.imageUrl;
-            if(drawerFunction.imageSize !== null){
-                // drawer.api.setSize(drawerFunction.imageSize.width, drawerFunction.imageSize.height);
-                const windowW = window.innerWidth;
-                const windowH = window.innerHeight-80;
-                const imageRatio = drawerFunction.imageSize.width/drawerFunction.imageSize.height;
-                const windowRatio = windowW/windowH;
-                const finialRatio = ( imageRatio > windowRatio )?windowW/drawerFunction.imageSize.width : windowH/drawerFunction.imageSize.height;
-                // drawer.api.startEditing();
-                // drawer.api.setSize(finialRatio*drawerFunction.imageSize.width, finialRatio*drawerFunction.imageSize.height);
-                // drawer.api.setBackgroundImageFromUrl(imageUrl);
-                parentElement.css({
-                    width: finialRatio*drawerFunction.imageSize.width,
-                    height: finialRatio*drawerFunction.imageSize.height
-                })
-                new Promise((resolve, reject) => {
-                    drawer.api.startEditing();
-                    resolve()
-                }).then(data => {
-                    drawer.api.setSize(finialRatio*drawerFunction.imageSize.width, finialRatio*drawerFunction.imageSize.height);
-                    drawer.api.setBackgroundImageFromUrl(imageUrl);
-                    parentElement.find('.editable-canvas-image').attr('src', imageUrl);
-                });
-            }
-        }
-    }
-
-    return drawerFunction;
-}());
-
-
-
-
-
 
 const fabricFunction = (function () {
     'use strict';
+
     let card;
+    let brushWidth= 10,
+        brushColor= "255, 255, 0",
+        brushOpacity= "0.8";
+    let activePage= null;
+    let defaultData= {
+        "name": "name",
+        "totalPage": 80,
+        "favoritePage": [0,1,3],
+        "pageDetail": {}
+    };
+
     let fabricFunction = {
         imageSize: null,
         imageUrl: null,
+        width: 0,
         init: function () {
             let fabricFunctionSection = $('.fabric-canvas');
             if (fabricFunctionSection.length > 0) {
                 $.each(fabricFunctionSection, function (index, val) {
                     let currentSection = $(this);
                     fabricFunction.initPlugin(currentSection);
+                    fabricFunction.initMasterBtn(currentSection);
+                    fabricFunction.initPencelBox(currentSection);
+
                     $(window).resize(function () {
                     });
                 });
             }
         },
-        initPlugin: function (parentElement) {
+        initPlugin: (parentElement) => {
             card = new fabric.Canvas('fabric-canvas',{
-                isDrawingMode: true
+                isDrawingMode: false
             });
-            fabricFunction.initImage(parentElement, './img/test.jpg');
+            //init page
+            fabricFunction.initPage(( (activePage)?activePage:'0'), parentElement );
+            //init brush
+            fabricFunction.setBrush();
             // card.on('object:modified', (e) => {
             //     console.log(e.target) // e.target為當前編輯的Object
             //     // ...旋轉，縮放，移動等編輯圖層的操作都監聽到
             //     // 所以如果有撤銷/恢復的場景，這裡可以保存編輯狀態
             // });
-            document.getElementById('btn-clear').addEventListener('click', () => {
-                if(confirm('確定要清除所有筆記?')){
-                    card.clear();
-                    fabricFunction.resetSize(parentElement);
-                }
-            });
             $(window).resize(function () {
                 fabricFunction.resetSize(parentElement);
             });
         },
-        initImage: function(parentElement, url){
+        initPage: (page, parentElement) =>{
+            fabricFunction.initImage(parentElement, `./img/test-${page}.jpg`, true);
+            activePage= page;
+            let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+            console.log(data.pageDetail[`${page}`])
+            var json = '{"objects":[{"type":"rect","originX":"center","originY":"center","left":300,"top":150,"width":150,"height":150,"fill":"#29477F","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":{"color":"rgba(94, 128, 191, 0.5)","blur":5,"offsetX":10,"offsetY":10},"visible":true,"clipTo":null,"rx":0,"ry":0,"x":0,"y":0},{"type":"circle","originX":"center","originY":"center","left":300,"top":400,"width":200,"height":200,"fill":"rgb(166,111,213)","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":{"color":"#5b238A","blur":20,"offsetX":-20,"offsetY":-10},"visible":true,"clipTo":null,"radius":100}],"background":""}'
+
+
+            // load data
+            card.loadFromJSON(data.pageDetail[`${page}`], card.renderAll.bind(card));
+            
+        },
+        initImage: (parentElement, url, isload) => {
             const img = new Image();
             img.onload = function() {
                 fabricFunction.imageUrl = url;
@@ -255,13 +92,11 @@ const fabricFunction = (function () {
                     width: this.width,
                     height: this.height,
                 };
-                fabricFunction.resetSize(parentElement, url);
+                fabricFunction.resetSize(parentElement, url, isload);
             }
             img.src = url;
-
-            
         },
-        resetSize: function(parentElement, url){
+        resetSize: (parentElement, url, isload) => {
             const imageUrl = (url)?url:fabricFunction.imageUrl;
             const windowW = window.innerWidth;
             const windowH = window.innerHeight-80;
@@ -275,43 +110,150 @@ const fabricFunction = (function () {
             card.setWidth(finialRatio*fabricFunction.imageSize.width);
             card.setHeight(finialRatio*fabricFunction.imageSize.height);
             card.setBackgroundImage(imageUrl, card.renderAll.bind(card), {
-                // width: finialRatio*fabricFunction.imageSize.width,
-                // height: finialRatio*fabricFunction.imageSize.height,
                 scaleX: finialRatio,
                 scaleY: finialRatio,
             });
-            // fabric.Image.fromURL(imageUrl, (img) => {
-            //     img.set({
-            //         scaleX: finialRatio,
-            //         scaleY: finialRatio,
-            //     });
-            //     card.setBackgroundImage(img, card.renderAll.bind(card));
-            //     card.renderAll();
-            // });
+            if(!isload){
+                var objects = card.getObjects();
+                var scaleMultiplier = finialRatio*fabricFunction.imageSize.width / fabricFunction.width;
+                // console.log(objects)
+                for (var i in objects) {
+                    objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
+                    objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
+                    objects[i].left = objects[i].left * scaleMultiplier;
+                    objects[i].top = objects[i].top * scaleMultiplier;
+                    objects[i].setCoords();
+                };
+            };
+            fabricFunction.width = finialRatio*fabricFunction.imageSize.width;
+            // function GetCanvasAtResoution(newWidth){
+            //     if (canvas.width != newWidth) {
+            //             var scaleMultiplier = newWidth / canvas.width;
+            //             var objects = canvas.getObjects();
+            //             for (var i in objects) {
+            //                 objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
+            //                 objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
+            //                 objects[i].left = objects[i].left * scaleMultiplier;
+            //                 objects[i].top = objects[i].top * scaleMultiplier;
+            //                 objects[i].setCoords();
+            //             }
+
+            //             canvas.renderAll();
+            //             canvas.calcOffset();
+            //         }
+            //     return canvas.toDataURL();
+            // }
+        },
+        initMasterBtn: (parentElement) => {
+            // save
+            document.getElementById('btn-save').addEventListener('click', () => {
+                
+                let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+                const {backgroundImage, ...saveData} = card.toJSON();
+                console.log(data)
+                data.pageDetail[`${activePage}`]= saveData;
+                // console.log(data)
+                localStorage.setItem('eBookData', JSON.stringify(data));
+            });
+            // pencel
+            document.getElementById('btn-pencil').addEventListener('click', () => {
+                $('.popup-modal-section').toggleClass('active');
+                var objects = card.getObjects();
+                console.log(objects)
+                
+            });
+            // close popup
+            document.getElementById('btn-card-close').addEventListener('click', () => {
+                fabricFunction.toDrawMode();
+                $('.popup-modal-section').removeClass('active');
+            });
+
+            // full screen
+            document.getElementById('btn-fullscreen').addEventListener('click', () => {
+                let btnFullScreen= document.getElementById('section-master');
+                if (screenfull.isEnabled) {
+                    screenfull.toggle(btnFullScreen);
+                }
+            });
+            // clear
+            document.getElementById('btn-clear').addEventListener('click', () => {
+                if(confirm('確定要清除"所有"筆記?')){
+                    card.clear();
+                    fabricFunction.resetSize(parentElement);
+                }
+            });
+            //select mod
+            document.getElementById('btn-select').addEventListener('click', () => {
+                fabricFunction.toSelectMode();
+            });
+
+            //eraser
+            document.getElementById('btn-eraser').addEventListener('click', () => {
+                fabricFunction.setEraser();
+            });
+            window.addEventListener("keydown", function(e) {
+                if(e.keyCode === 46){
+                    fabricFunction.setEraser();
+                };
+            }, true);
+            
+        },
+        initPencelBox: (parentElement) => {
+            //透明度
+            document.getElementById('v-opacity').addEventListener('input', (e) => {
+                const val= e.target.value/10;
+                e.target.nextElementSibling.getElementsByTagName('span')[0].textContent=val;
+                brushOpacity= val;
+                fabricFunction.setBrush();
+            });
+            //粗細
+            document.getElementById('v-width').addEventListener('input', (e) => {
+                const val= parseInt(e.target.value, 10);
+                e.target.nextElementSibling.getElementsByTagName('span')[0].textContent=val;
+                brushWidth= val;
+                fabricFunction.setBrush();
+            });
+            //顏色
+            [...document.getElementsByClassName('d-color')].forEach( (e) => {
+                e.addEventListener('click', (e) => {
+                    document.getElementsByClassName('d-color active')[0].classList.remove('active');
+                    e.target.classList.add('active');
+                    brushColor= e.target.dataset.color;
+                    fabricFunction.setBrush();
+                });
+            });
+        },
+        setBrush: () => {
+            card.freeDrawingBrush.width = brushWidth;
+            card.freeDrawingBrush.color = `rgba(${brushColor}, ${brushOpacity})`
+        },
+        toDrawMode: () => {
+            card.isDrawingMode= true;
+            $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
+        },
+        leaveDrawMode: () => {
+            card.isDrawingMode= false;
+            $('#btn-pencil').removeClass('active');
+        },
+        toSelectMode: () => {
+            card.isDrawingMode= false;
+            $('#btn-select').addClass('active').siblings('.active').removeClass('active');
+        },
+        setEraser: () => {
+            if(confirm('確定要刪除"選取"筆畫?')){
+                card.getActiveObjects().forEach((obj) => {
+                    card.remove(obj)
+                });
+                card.discardActiveObject().renderAll();
+            };
         }
     }
 
     return fabricFunction;
 }());
 
-window.onload = () => {
+$(document).ready(function () {
     fullHeight.init();
 
-    // drawerFunction.init();
     fabricFunction.init();
-
-
-};
-
-
-
-$(document).ready(function () {
-
-// 122
-    const element = document.getElementById('section-master');
-    document.getElementById('btn-fullscreen').addEventListener('click', () => {
-        if (screenfull.isEnabled) {
-            screenfull.toggle(element);
-        }
-    });
 });
