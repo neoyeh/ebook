@@ -34,7 +34,11 @@ const fabricFunction = (function () {
         "name": "name",
         "totalPage": 80,
         "favoritePage": [0,1,3],
-        "pageDetail": {}
+        "pageDetail": {},
+        "windowScreen": {
+            width: 1920,
+            height: 1024
+        }
     };
 
     let fabricFunction = {
