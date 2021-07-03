@@ -76,24 +76,45 @@ body{
     }
   }
   .control-nav-tool{
+    position: fixed; 
+    height: 30px;
+    bottom: 90px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 20;
+    display: flex;
+    flex-wrap: nowrap;
     .prev,
     .next{
-      position: fixed; 
-      height: 100vh;
-      height: calc(var(--vh, 1vh) * 100);
-      width: 50px;
-      background-color: #f00;
-      top: 0;
+      height: 100%;
+      width: 35px;
+      background-color: rgba(255,255,255,0.85);
       z-index: 20;
       display: flex;
       justify-content: center;
       align-items: center;
+      cursor: pointer;
+      box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
+      border-radius: 5px;
     }
     .prev{
       left: 0;
     }
     .next{
       right: 0;
+    }
+    .page{
+      width: 30px;
+      height: 100%;
+      background-color:rgba(255,255,255,0.85);
+      font-size: 19px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 7px;
+      font-weight: bolder;
+      box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
+      border-radius: 5px;
     }
   }
 }
@@ -122,7 +143,7 @@ body{
     .card-header{
       background-color: #555;
       width: 100%;
-      padding: 20px 30px;
+      padding: 16px 30px;
       color: #fff;
       font-size: 24px;
       font-weight: 800;
@@ -159,8 +180,46 @@ body{
           }
         }
       }
+      .catalog-content{
+        width: 100%;
+        display: grid;
+        // grid-template-columns: repeat(2, 1fr);
+        grid-gap: 12px;
+        .catalog-item{
+          width: 100%;
+          cursor: pointer;
+          color:  #fff;
+          font-size: 17px;
+          padding: 4px 0;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: center;
+          .btn-remove--favorite{
+            background-color: #ed5e68;
+            border-radius: 8px;
+            padding: 6px 18px;
+            font-size: 15px;
+            cursor: pointer;
+          }
+        }
+      }
       .tool-content{
         padding-left: 24px;
+      }
+    }
+    .card-bottom{
+      border-top: 2px solid #333;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: flex-end;
+      .btn-add--favorite{
+        background-color: #5cb85c;
+        border-radius: 8px;
+        padding: 6px 18px;
+        font-size: 15px;
+        color: #fff;
+        cursor: pointer;
       }
     }
   }

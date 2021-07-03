@@ -28,17 +28,21 @@ const fabricFunction = (function () {
     let card;
     let brushWidth= 10,
         brushColor= "255, 255, 0",
-        brushOpacity= "0.8";
-    let activePage= null;
+        brushOpacity= "0.8",
+        canvasSize= {
+            width: 0,
+            height: 0
+        },
+        activePage= null;
     let defaultData= {
         "name": "name",
         "totalPage": 80,
-        "favoritePage": [0,1,3],
+        "favoritePage": [0,1],
         "pageDetail": {},
-        "windowScreen": {
-            width: 1920,
-            height: 1024
-        }
+        "pageLinkList": [
+            "./img/test-0.jpg",
+            "./img/test-1.jpg"
+        ]
     };
 
     let fabricFunction = {
@@ -65,6 +69,8 @@ const fabricFunction = (function () {
             });
             //init page
             fabricFunction.initPage(( (activePage)?activePage:'0'), parentElement );
+            //init favorite
+            fabricFunction.initFavorite();
             //init brush
             fabricFunction.setBrush();
             // card.on('object:modified', (e) => {
@@ -76,31 +82,51 @@ const fabricFunction = (function () {
                 fabricFunction.resetSize(parentElement);
             });
         },
+        initFavorite: () =>{
+            let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+            let html= '';
+            console.log(data)
+            data.favoritePage.map((item, i)=>{
+                html+=`
+                <div class="catalog-item" data-page="${item}">
+                    第 ${item+1}頁
+                    <div class="btn-remove--favorite">刪除書籤</div>
+                </div>
+                `;
+            });
+            $('.popup-modal-section--favorite').find('.catalog-content').html(html);
+        },
         initPage: (page, parentElement) =>{
-            fabricFunction.initImage(parentElement, `./img/test-${page}.jpg`, true);
+            card.clear();
             activePage= page;
             let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
-            console.log(data.pageDetail[`${page}`])
-            var json = '{"objects":[{"type":"rect","originX":"center","originY":"center","left":300,"top":150,"width":150,"height":150,"fill":"#29477F","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":{"color":"rgba(94, 128, 191, 0.5)","blur":5,"offsetX":10,"offsetY":10},"visible":true,"clipTo":null,"rx":0,"ry":0,"x":0,"y":0},{"type":"circle","originX":"center","originY":"center","left":300,"top":400,"width":200,"height":200,"fill":"rgb(166,111,213)","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeLineJoin":"miter","strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":{"color":"#5b238A","blur":20,"offsetX":-20,"offsetY":-10},"visible":true,"clipTo":null,"radius":100}],"background":""}'
-
-
-            // load data
-            card.loadFromJSON(data.pageDetail[`${page}`], card.renderAll.bind(card));
+            console.log(data.pageLinkList[page]);
+            // card.zoomToPoint({ x: 0, y: 0 }, 1);
+            card.setViewportTransform([1,0,0,1,0,0]); 
+            $('#page').text(Number(page)+1)
+            fabricFunction.initImage(parentElement, data.pageLinkList[page], true, data, page);
             
         },
-        initImage: (parentElement, url, isload) => {
+        initImage: (parentElement, url, isload, data, page) => {
             const img = new Image();
             img.onload = function() {
+                // load data
+                console.log(data)
                 fabricFunction.imageUrl = url;
                 fabricFunction.imageSize = {
                     width: this.width,
                     height: this.height,
                 };
-                fabricFunction.resetSize(parentElement, url, isload);
+                if(data.pageDetail[`${page}`]){
+                    card.loadFromJSON(data.pageDetail[`${page}`].objects, card.renderAll.bind(card));
+                    fabricFunction.resetSize(parentElement, url, isload, data, page);
+                }else{
+                    fabricFunction.resetSize(parentElement, url, false, data, page);
+                }
             }
             img.src = url;
         },
-        resetSize: (parentElement, url, isload) => {
+        resetSize: (parentElement, url, isload, data, page) => {
             const imageUrl = (url)?url:fabricFunction.imageUrl;
             const windowW = window.innerWidth;
             const windowH = window.innerHeight-80;
@@ -117,61 +143,117 @@ const fabricFunction = (function () {
                 scaleX: finialRatio,
                 scaleY: finialRatio,
             });
-            if(!isload){
-                var objects = card.getObjects();
-                var scaleMultiplier = finialRatio*fabricFunction.imageSize.width / fabricFunction.width;
-                // console.log(objects)
-                for (var i in objects) {
-                    objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
-                    objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
-                    objects[i].left = objects[i].left * scaleMultiplier;
-                    objects[i].top = objects[i].top * scaleMultiplier;
-                    objects[i].setCoords();
-                };
+            canvasSize.width= finialRatio*fabricFunction.imageSize.width;
+            canvasSize.height= finialRatio*fabricFunction.imageSize.height;
+
+            let scaleMultiplier= (!isload)?finialRatio*fabricFunction.imageSize.width / fabricFunction.width:
+            finialRatio*fabricFunction.imageSize.width / data.pageDetail[`${page}`].windowScreen.width;
+
+            let objects = card.getObjects();
+            // console.log(objects)
+            for (var i in objects) {
+                objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
+                objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
+                objects[i].left = objects[i].left * scaleMultiplier;
+                objects[i].top = objects[i].top * scaleMultiplier;
+                objects[i].setCoords();
             };
             fabricFunction.width = finialRatio*fabricFunction.imageSize.width;
-            // function GetCanvasAtResoution(newWidth){
-            //     if (canvas.width != newWidth) {
-            //             var scaleMultiplier = newWidth / canvas.width;
-            //             var objects = canvas.getObjects();
-            //             for (var i in objects) {
-            //                 objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
-            //                 objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
-            //                 objects[i].left = objects[i].left * scaleMultiplier;
-            //                 objects[i].top = objects[i].top * scaleMultiplier;
-            //                 objects[i].setCoords();
-            //             }
-
-            //             canvas.renderAll();
-            //             canvas.calcOffset();
-            //         }
-            //     return canvas.toDataURL();
-            // }
         },
         initMasterBtn: (parentElement) => {
+            // favorite
+            document.getElementById('btn-favorite').addEventListener('click', () => {
+                $('.popup-modal-section--favorite').toggleClass('active');
+            });
+            // favorite remove
+            document.addEventListener('click',function(e){
+                if(e.target && e.target.classList.contains('btn-remove--favorite')){
+                    if( confirm('確定要刪除書籤?') ){
+                        let page= $(e.target).closest('.catalog-item').data('page');
+                        let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+                        console.log(data.favoritePage)
+                        data.favoritePage= data.favoritePage.filter(item => {
+                            console.log('===')
+                            console.log(page)
+                            console.log(item)
+                            return item !== page;
+                        });
+                        console.log(data)
+                        localStorage.setItem('eBookData', JSON.stringify(data));
+                        fabricFunction.initFavorite();
+                    }
+                }
+            });
+            // add favorite
+            document.getElementsByClassName('btn-add--favorite')[0].addEventListener('click', () => {
+                console.log('aad')
+                let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+                const {backgroundImage, ...saveData} = card.toJSON();
+                if(data.favoritePage.length>=10){
+                    alert('已超過書籤最大數量10');
+                }else if(data.favoritePage.indexOf(Number(activePage))>=0){
+                    alert('本頁已加入書籤');
+                }else{
+                    data.favoritePage.push(Number(activePage));
+                    data.favoritePage.sort()
+                    localStorage.setItem('eBookData', JSON.stringify(data));
+                    fabricFunction.initFavorite();
+                    console.log(data)
+                };
+                // data.pageDetail[`${activePage}`]= {};
+                // data.pageDetail[`${activePage}`]['objects']= saveData;
+                // data.pageDetail[`${activePage}`]['windowScreen']= canvasSize;
+                // // console.log(data)
+                // localStorage.setItem('eBookData', JSON.stringify(data));
+            });
+
+            // close favorite
+            document.getElementsByClassName('popup-modal-section--favorite')[0].getElementsByClassName('btn-card-close')[0].addEventListener('click', () => {
+                $('.popup-modal-section--favorite').removeClass('active');
+            });
+            // catalog
+            document.getElementById('btn-catalog').addEventListener('click', () => {
+                $('.popup-modal-section--catalog').toggleClass('active');
+            });
+            // catalog click
+            document.addEventListener('click',function(e){
+                if(e.target && e.target.classList.contains('catalog-item')){
+                    let page= (e.target.dataset.page).toString();
+                    fabricFunction.initPage(page, parentElement );
+                    $('.popup-modal-section--catalog').removeClass('active');
+                }
+            });
+            // close catalog
+            document.getElementsByClassName('popup-modal-section--catalog')[0].getElementsByClassName('btn-card-close')[0].addEventListener('click', () => {
+                $('.popup-modal-section--catalog').removeClass('active');
+            });
+            // read
+            document.getElementById('btn-read').addEventListener('click', () => {
+                fabricFunction.toReadmode();
+                card.discardActiveObject().renderAll();
+            });
             // save
             document.getElementById('btn-save').addEventListener('click', () => {
-                
                 let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
                 const {backgroundImage, ...saveData} = card.toJSON();
                 console.log(data)
-                data.pageDetail[`${activePage}`]= saveData;
+                data.pageDetail[`${activePage}`]= {};
+                data.pageDetail[`${activePage}`]['objects']= saveData;
+                data.pageDetail[`${activePage}`]['windowScreen']= canvasSize;
                 // console.log(data)
                 localStorage.setItem('eBookData', JSON.stringify(data));
             });
             // pencel
             document.getElementById('btn-pencil').addEventListener('click', () => {
-                $('.popup-modal-section').toggleClass('active');
+                $('.popup-modal-section--pencil').toggleClass('active');
                 var objects = card.getObjects();
-                console.log(objects)
-                
+                // console.log(objects)
             });
-            // close popup
-            document.getElementById('btn-card-close').addEventListener('click', () => {
+            // close pencel
+            document.getElementsByClassName('popup-modal-section--pencil')[0].getElementsByClassName('btn-card-close')[0].addEventListener('click', () => {
                 fabricFunction.toDrawMode();
-                $('.popup-modal-section').removeClass('active');
+                $('.popup-modal-section--pencil').removeClass('active');
             });
-
             // full screen
             document.getElementById('btn-fullscreen').addEventListener('click', () => {
                 let btnFullScreen= document.getElementById('section-master');
@@ -181,25 +263,102 @@ const fabricFunction = (function () {
             });
             // clear
             document.getElementById('btn-clear').addEventListener('click', () => {
-                if(confirm('確定要清除"所有"筆記?')){
+                if(confirm('確定要清除本頁筆記?')){
                     card.clear();
                     fabricFunction.resetSize(parentElement);
                 }
             });
-            //select mod
+            //select mode
             document.getElementById('btn-select').addEventListener('click', () => {
                 fabricFunction.toSelectMode();
             });
-
             //eraser
             document.getElementById('btn-eraser').addEventListener('click', () => {
                 fabricFunction.setEraser();
             });
-            window.addEventListener("keydown", function(e) {
-                if(e.keyCode === 46){
-                    fabricFunction.setEraser();
+            // scale
+            card.on('mouse:wheel', function(opt) { 
+                opt.e.preventDefault(); 
+                opt.e.stopPropagation(); 
+                console.log(opt)
+                let delta = opt.e.deltaY; 
+                let zoom = card.getZoom(); 
+                zoom *= 0.999 ** delta; 
+                if (zoom > 2) zoom = 2 ; 
+                if (zoom < 0.8) zoom = 0.8; 
+                console.log(opt.e.offsetX)
+                card.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+
+                // card.setZoom(zoom); 
+            });
+
+            card.on('mouse:down', function(opt) {
+                let evt = opt.e;
+                if (evt.altKey === true) {
+                  this.isDragging = true;
+                  this.selection = false;
+                  this.lastPosX = evt.clientX;
+                  this.lastPosY = evt.clientY;
+                }
+            });
+            card.on('mouse:move', function(opt) {
+                if (this.isDragging) {
+                    let e = opt.e;
+                    let vpt = this.viewportTransform;
+                    vpt[4] += e.clientX - this.lastPosX;
+                    vpt[5] += e.clientY - this.lastPosY;
+                    this.requestRenderAll();
+                    this.lastPosX = e.clientX;
+                    this.lastPosY = e.clientY;
+                }
+            });
+            card.on('mouse:up', function(opt) {
+                // on mouse up we want to recalculate new interaction
+                // for all objects, so we call setViewportTransform
+                this.setViewportTransform(this.viewportTransform);
+                this.isDragging = false;
+                this.selection = true;
+            });
+            
+            function funcPrev(){
+                if( Number(activePage)-1 >= 0 ){
+                    fabricFunction.initPage(  (Number(activePage)-1).toString(), parentElement );
+                }else{
+                    console.log('no prev')
                 };
+            };
+            function funcNext(){
+                let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+                let total = data.pageLinkList.length;
+                if( Number(activePage)+1 < total ){
+                    fabricFunction.initPage( (Number(activePage)+1).toString(), parentElement );
+                }else{
+                    console.log('no next');
+                };
+            };
+            //prev page
+            document.getElementById('prev-page').addEventListener('click', () => {
+                funcPrev();
+            });
+            //next page
+            document.getElementById('next-page').addEventListener('click', () => {
+                funcNext();
+            });
+            window.addEventListener("keydown", function(e) {
+                switch (e.keyCode) {
+                case 37:
+                    funcPrev();
+                    break;
+                case 39:
+                    funcNext();
+                    break;
+                case 46:
+                    fabricFunction.setEraser();
+                    break;
+                default:
+                }
             }, true);
+
             
         },
         initPencelBox: (parentElement) => {
@@ -231,15 +390,21 @@ const fabricFunction = (function () {
             card.freeDrawingBrush.width = brushWidth;
             card.freeDrawingBrush.color = `rgba(${brushColor}, ${brushOpacity})`
         },
+        toReadmode: () => {
+            $('.master-block').addClass('read-active');
+            $('#btn-read').addClass('active').siblings('.active').removeClass('active');
+        },
         toDrawMode: () => {
             card.isDrawingMode= true;
+            $('.master-block').removeClass('read-active');
             $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
         },
         leaveDrawMode: () => {
-            card.isDrawingMode= false;
+            $('.master-block').removeClass('read-active');
             $('#btn-pencil').removeClass('active');
         },
         toSelectMode: () => {
+            $('.master-block').removeClass('read-active');
             card.isDrawingMode= false;
             $('#btn-select').addClass('active').siblings('.active').removeClass('active');
         },

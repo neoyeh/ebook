@@ -6,7 +6,9 @@
         "favoritePage": [0,1,3],
         "pageDetail": {
             "0": {
-                
+                "objects": "",
+                "width": "",
+                "height": ""
             }
         }
     }

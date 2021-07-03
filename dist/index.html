@@ -12,10 +12,11 @@
     <body>
         <section class="section-master" id="section-master">
             <div class="control-nav-tool">
-                <div class="prev">
+                <div class="prev" id="prev-page">
                     <i class="fa fa-chevron-left" aria-hidden="true"></i>
                 </div>
-                <div class="next">
+                <div class="page" id="page">1</div>
+                <div class="next" id="next-page">
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </div>
             </div>
@@ -26,6 +27,14 @@
 
             </div>
             <div class="master-tool">
+                <div class="tool-button" id="btn-catalog">
+                    <i class="fa fa-list" aria-hidden="true"></i>
+                    <div>目錄</div>
+                </div>
+                <div class="tool-button" id="btn-favorite">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                    <div>書籤</div>
+                </div>
                 <div class="tool-button active" id="btn-read">
                     <i class="fa fa-book" aria-hidden="true"></i>
                     <div>閱讀模式</div>
@@ -38,29 +47,30 @@
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                     <div>色筆</div>
                 </div>
-                <div class="tool-button" id="btn-fullscreen">
-                    <i class="fa fa-arrows-alt" aria-hidden="true"></i>
-                    <div>全螢幕</div>
-                </div>
-                <div class="tool-button" id="btn-clear">
-                    <i class="fa fa-laptop" aria-hidden="true"></i>
-                    <div>清空畫布</div>
-                </div>
                 <div class="tool-button" id="btn-select">
-                    <i class="fa fa-hand-lizard-o" aria-hidden="true"></i>
+                    <i class="fa fa-hand-pointer-o" aria-hidden="true"></i>
                     <div>選取模式</div>
                 </div>
                 <div class="tool-button" id="btn-eraser">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
-                    <div>刪除選取筆畫</div>
+                    <div>刪除已選取筆畫</div>
+                </div>
+                <div class="tool-button" id="btn-clear">
+                    <i class="fa fa-laptop" aria-hidden="true"></i>
+                    <div>清空本頁畫布</div>
+                </div>
+                <div class="tool-button" id="btn-fullscreen">
+                    <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+                    <div>全螢幕</div>
                 </div>
             </div>
         </section>
-        <div class="popup-modal-section" id="">
+
+        <div class="popup-modal-section popup-modal-section--pencil" id="">
             <div class="popup-modal-card">
                 <div class="card-header">
                     <div>螢光筆</div>
-                    <div class="btn-card-close" id="btn-card-close">
+                    <div class="btn-card-close">
                         <i class="fa fa-times" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -102,6 +112,46 @@
                 </div>
             </div>
         </div>
+        <div class="popup-modal-section popup-modal-section--catalog" id="">
+            <div class="popup-modal-card">
+                <div class="card-header">
+                    <div>目錄</div>
+                    <div class="btn-card-close">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="catalog-content">
+                        <div class="catalog-item" data-page="0">text1</div>
+                        <div class="catalog-item" data-page="1">text1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popup-modal-section popup-modal-section--favorite" id="">
+            <div class="popup-modal-card">
+                <div class="card-header">
+                    <div>書籤</div>
+                    <div class="btn-card-close">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="catalog-content">
+                        <div class="catalog-item" data-page="0">text1 <div class="btn-remove--favorite">刪除書籤</div></div>
+                        <div class="catalog-item" data-page="1">text1 <div class="btn-remove--favorite">刪除書籤</div></div>
+                    </div>
+                </div>
+                <div class="card-bottom">
+                    <div class="btn-add--favorite">新增書籤</div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
         <script src="./lib/jquery.js"></script>
         <script src="./lib/screenfull.js"></script>
         <!-- <script src="./lib/drawerJs/dist/drawerJs.standalone.js"></script> -->
