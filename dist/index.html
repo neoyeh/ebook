@@ -20,7 +20,7 @@
                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </div>
             </div>
-            <div class="master-block read-active">
+            <div class="master-block">
                 <div class="canvas-editor" id="canvas-editor" style="display: none;"></div>
                 <canvas class="fabric-canvas" id="fabric-canvas" width="300" height="300"></canvas>
 
@@ -51,6 +51,10 @@
                     <i class="fa fa-hand-pointer-o" aria-hidden="true"></i>
                     <div>選取模式</div>
                 </div>
+                <div class="tool-button" id="btn-resize">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                    <div>原尺寸</div>
+                </div>
                 <div class="tool-button" id="btn-eraser">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                     <div>刪除已選取筆畫</div>
@@ -62,6 +66,10 @@
                 <div class="tool-button" id="btn-fullscreen">
                     <i class="fa fa-arrows-alt" aria-hidden="true"></i>
                     <div>全螢幕</div>
+                </div>
+                <div class="tool-button" id="btn-info">
+                    <i class="fa fa-book" aria-hidden="true"></i>
+                    <div>操作說明</div>
                 </div>
             </div>
         </section>
@@ -122,8 +130,8 @@
                 </div>
                 <div class="card-content">
                     <div class="catalog-content">
-                        <div class="catalog-item" data-page="0">text1</div>
-                        <div class="catalog-item" data-page="1">text1</div>
+                        <div class="catalog-item" data-page="0">第一頁</div>
+                        <div class="catalog-item" data-page="2">第三頁</div>
                     </div>
                 </div>
             </div>
@@ -144,6 +152,25 @@
                 </div>
                 <div class="card-bottom">
                     <div class="btn-add--favorite">新增書籤</div>
+                </div>
+            </div>
+        </div>
+        <div class="popup-modal-section popup-modal-section--info">
+            <div class="popup-modal-card">
+                <div class="card-header">
+                    <div>操作說明</div>
+                    <div class="btn-card-close">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="catalog-content">
+                        <div class="info-item txt-color-white">1. 色筆使用完畢需存檔。</div>
+                        <div class="info-item txt-color-white">2. 刪除色筆要先進入選取模式選取要刪除的色筆後，點選刪除已選取筆畫，然後存檔。</div>
+                        <div class="info-item txt-color-white">3. 書籤上限為10筆。</div>
+                        <div class="info-item txt-color-white">4. 使用滑鼠滾輪來調整放大縮小。</div>
+                        <div class="info-item txt-color-white">5. 使用Alt+滑鼠拖曳畫面位置。</div>
+                    </div>
                 </div>
             </div>
         </div>

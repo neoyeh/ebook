@@ -33,7 +33,8 @@ const fabricFunction = (function () {
             width: 0,
             height: 0
         },
-        activePage= null;
+        activePage= null,
+        isReadMode= true;
     let defaultData= {
         "name": "name",
         "totalPage": 80,
@@ -41,7 +42,11 @@ const fabricFunction = (function () {
         "pageDetail": {},
         "pageLinkList": [
             "./img/test-0.jpg",
-            "./img/test-1.jpg"
+            "./img/test-1.jpg",
+            "./img/test-2.jpg",
+            "./img/test-3.jpg",
+            "./img/test-4.jpg",
+            "./img/test-5.jpg"
         ]
     };
 
@@ -122,7 +127,10 @@ const fabricFunction = (function () {
                     fabricFunction.resetSize(parentElement, url, isload, data, page);
                 }else{
                     fabricFunction.resetSize(parentElement, url, false, data, page);
-                }
+                };
+                if(isReadMode){
+                    fabricFunction.toReadmode();
+                };
             }
             img.src = url;
         },
@@ -200,11 +208,6 @@ const fabricFunction = (function () {
                     fabricFunction.initFavorite();
                     console.log(data)
                 };
-                // data.pageDetail[`${activePage}`]= {};
-                // data.pageDetail[`${activePage}`]['objects']= saveData;
-                // data.pageDetail[`${activePage}`]['windowScreen']= canvasSize;
-                // // console.log(data)
-                // localStorage.setItem('eBookData', JSON.stringify(data));
             });
 
             // close favorite
@@ -230,7 +233,6 @@ const fabricFunction = (function () {
             // read
             document.getElementById('btn-read').addEventListener('click', () => {
                 fabricFunction.toReadmode();
-                card.discardActiveObject().renderAll();
             });
             // save
             document.getElementById('btn-save').addEventListener('click', () => {
@@ -246,8 +248,6 @@ const fabricFunction = (function () {
             // pencel
             document.getElementById('btn-pencil').addEventListener('click', () => {
                 $('.popup-modal-section--pencil').toggleClass('active');
-                var objects = card.getObjects();
-                // console.log(objects)
             });
             // close pencel
             document.getElementsByClassName('popup-modal-section--pencil')[0].getElementsByClassName('btn-card-close')[0].addEventListener('click', () => {
@@ -260,6 +260,18 @@ const fabricFunction = (function () {
                 if (screenfull.isEnabled) {
                     screenfull.toggle(btnFullScreen);
                 }
+            });
+            // resize
+            document.getElementById('btn-resize').addEventListener('click', () => {
+                card.setViewportTransform([1,0,0,1,0,0]); 
+            });
+            // info
+            document.getElementById('btn-info').addEventListener('click', () => {
+                $('.popup-modal-section--info').toggleClass('active');
+            });
+            // close info
+            document.getElementsByClassName('popup-modal-section--info')[0].getElementsByClassName('btn-card-close')[0].addEventListener('click', () => {
+                $('.popup-modal-section--info').removeClass('active');
             });
             // clear
             document.getElementById('btn-clear').addEventListener('click', () => {
@@ -391,21 +403,31 @@ const fabricFunction = (function () {
             card.freeDrawingBrush.color = `rgba(${brushColor}, ${brushOpacity})`
         },
         toReadmode: () => {
-            $('.master-block').addClass('read-active');
+            isReadMode= true;
+            card.forEachObject(function(object){ 
+                object.selectable = false; 
+                object.hoverCursor= "normal";
+            });
+            card.discardActiveObject().renderAll();
             $('#btn-read').addClass('active').siblings('.active').removeClass('active');
         },
         toDrawMode: () => {
+            isReadMode= false;
             card.isDrawingMode= true;
-            $('.master-block').removeClass('read-active');
+            card.forEachObject(function(object){ 
+                object.selectable = false; 
+                object.hoverCursor= "normal";
+            });
+            card.discardActiveObject().renderAll();
             $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
         },
-        leaveDrawMode: () => {
-            $('.master-block').removeClass('read-active');
-            $('#btn-pencil').removeClass('active');
-        },
         toSelectMode: () => {
-            $('.master-block').removeClass('read-active');
+            isReadMode= true;
             card.isDrawingMode= false;
+            card.forEachObject(function(object){ 
+                object.selectable = true; 
+                object.hoverCursor= "move";
+            });
             $('#btn-select').addClass('active').siblings('.active').removeClass('active');
         },
         setEraser: () => {
