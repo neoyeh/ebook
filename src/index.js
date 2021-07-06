@@ -404,6 +404,7 @@ const fabricFunction = (function () {
         },
         toReadmode: () => {
             isReadMode= true;
+            card.isDrawingMode= false;
             card.forEachObject(function(object){ 
                 object.selectable = false; 
                 object.hoverCursor= "normal";
