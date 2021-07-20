@@ -45,7 +45,7 @@
                 </div>
                 <div class="tool-button" id="btn-pencil">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
-                    <div>色筆</div>
+                    <div>書寫模式</div>
                 </div>
                 <div class="tool-button" id="btn-select">
                     <i class="fa fa-hand-pointer-o" aria-hidden="true"></i>
@@ -72,12 +72,18 @@
                     <div>操作說明</div>
                 </div>
             </div>
+            <div class="video-list">
+                <div class="list-content">
+                    <!-- <div class="list-item play-modal-video-btn" data-vid="X4zQ65e44Y8" data-vtype="youtube">video1</div> -->
+                </div>
+                <div class="list-title">影片列表 點擊<span data-close="關閉" data-open="開啟">開啟</span></div>
+            </div>
         </section>
 
         <div class="popup-modal-section popup-modal-section--pencil" id="">
             <div class="popup-modal-card">
                 <div class="card-header">
-                    <div>螢光筆</div>
+                    <div>書寫模式</div>
                     <div class="btn-card-close">
                         <i class="fa fa-times" aria-hidden="true"></i>
                     </div>
@@ -103,10 +109,16 @@
                     </div>
                     <div class="tool-content">
                         <div class="input-group">
-                            <label class="input-name" for="v-opacity">透明度</label>
-                            <div class="input-group-content">
-                                <input type="range" value="8" min="2"max="10" id="v-opacity">
-                                <div class="v-value"><span>0.8</span></div>
+                            <label class="input-name">工具筆</label>
+                            <div class="input-group-content input-group-content--column">
+                                <div class="input-group-column-item">
+                                  <input type="radio" name="v-opacity" id="v-pencil" value="1" checked>
+                                  <label for="v-pencil">色筆</label>
+                                </div>
+                                <div class="input-group-column-item">
+                                    <input type="radio" name="v-opacity" id="v-highlighter" value="0.3">
+                                    <label for="v-highlighter">螢光筆</label>
+                                </div>
                             </div>
                         </div>
                         <div class="input-group">
@@ -114,6 +126,15 @@
                             <div class="input-group-content">
                                 <input type="range" value="10" min="5"max="45" id="v-width">
                                 <div class="v-value"><span>10</span></div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-name">橡皮擦</label>
+                            <div class="input-group-content input-group-content--column">
+                                <div class="input-group-column-item">
+                                    <input type="checkbox" value="10" id="v-eraser">
+                                    <label for="v-eraser">橡皮擦</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -131,7 +152,11 @@
                 <div class="card-content">
                     <div class="catalog-content">
                         <div class="catalog-item" data-page="0">第一頁</div>
+                        <div class="catalog-item" data-page="1">第二頁</div>
                         <div class="catalog-item" data-page="2">第三頁</div>
+                        <div class="catalog-item" data-page="3">第四頁</div>
+                        <div class="catalog-item" data-page="4">第五頁</div>
+                        <div class="catalog-item" data-page="5">第六頁</div>
                     </div>
                 </div>
             </div>
@@ -196,11 +221,41 @@
                 </div>
             </div>
         </div>
+        <div class="popup-modal-section popup-modal-section--video">
+            <div class="popup-modal-card">
+                <div class="card-header">
+                    <div>影片播放</div>
+                    <div class="btn-card-close">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="card-content">
+                </div>
+            </div>
+        </div>
+
+        <section class="section-modal-video">
+            <div class="modal-overlap-container">
+              <div class="container">
+                <div class="btn-close show">
+                  <svg viewbox="0 0 40 40">
+                    <path class="close-x" d="M 10,10 L 30,30 M 30,10 L 10,30">
+                    </path>
+                  </svg>
+                </div>
+                <div class="align-center">
+                  <!-- Required player-->
+                  <div id="player">
+                  </div>
+                </div>
+              </div>
+            </div>
+        </section>
 
 
 
 
-
+        <script src="//www.youtube.com/player_api"></script>
         <script src="./lib/jquery.js"></script>
         <script src="./lib/screenfull.js"></script>
         <!-- <script src="./lib/drawerJs/dist/drawerJs.standalone.js"></script> -->

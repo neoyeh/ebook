@@ -28,7 +28,7 @@ const fabricFunction = (function () {
     let card;
     let brushWidth= 10,
         brushColor= "255, 255, 0",
-        brushOpacity= "0.8",
+        brushOpacity= "1",
         canvasSize= {
             width: 0,
             height: 0
@@ -47,7 +47,26 @@ const fabricFunction = (function () {
             "./img/test-3.jpg",
             "./img/test-4.jpg",
             "./img/test-5.jpg"
-        ]
+        ],
+        "pageVideoList": {
+            "0":[
+                {
+                    "title": "影片標題1",
+                    "vid": "X4zQ65e44Y8"
+                }
+            ],
+            "3":[
+                {
+                    "title": "影片標題4-1",
+                    "vid": "nExsxN_zSJM"
+                },
+                {
+                    "title": "影片標題4-2",
+                    "vid": "P6Rnwg1fhak"
+                }
+
+            ]
+        },
     };
 
     let fabricFunction = {
@@ -105,8 +124,20 @@ const fabricFunction = (function () {
             card.clear();
             activePage= page;
             let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
-            console.log(data.pageLinkList[page]);
-            // card.zoomToPoint({ x: 0, y: 0 }, 1);
+            console.log('initPage');
+            if(data.pageVideoList[page]){
+                let html= '';
+                for(let i=0; i<data.pageVideoList[page].length; i++){
+                    console.log(data.pageVideoList[page][i])
+                    html+=`
+                        <div class="list-item play-modal-video-btn" data-vid="${data.pageVideoList[page][i].vid}" data-vtype="youtube">${data.pageVideoList[page][i].title}</div>
+                    `;
+                }
+                $('.video-list').show();
+                $('.video-list .list-content').html(html);
+            }else{
+                $('.video-list').hide();
+            };
             card.setViewportTransform([1,0,0,1,0,0]); 
             $('#page').text(Number(page)+1)
             fabricFunction.initImage(parentElement, data.pageLinkList[page], true, data, page);
@@ -304,6 +335,96 @@ const fabricFunction = (function () {
                 // card.setZoom(zoom); 
             });
 
+            //video
+            const youtubeVideo = {
+                init(vid) {
+                    let playerIgnored;
+
+                    function onPlayerReady(event) {
+                        event.target.playVideo();
+                        modalVideo.showModal();
+                        modalVideo.setupCloseModalBtn();
+                    }
+                    function onPlayerStateChange(event) {
+                        if (event.data === 0) {
+                            modalVideo.hideModal();
+                        }
+                    }
+                    function onYouTubePlayerAPIReady() {
+                        playerIgnored = new YT.Player('player', {
+                            height: '390',
+                            width: '640',
+                            videoId: vid,
+                            events: {
+                            onReady: onPlayerReady,
+                            onStateChange: onPlayerStateChange,
+                            },
+                        });
+                    }
+                    onYouTubePlayerAPIReady();
+                },
+            };
+            const modalVideo = {
+                init() {
+                  const modalVideoBlock = document.querySelectorAll('.play-modal-video-btn');
+                  if (modalVideoBlock) {
+                    $(document).on('click','.play-modal-video-btn', (e)=>{
+                      e.preventDefault();
+                      const videoType = $(e.currentTarget).data('vtype');
+                      const videoId = $(e.currentTarget).data('vid');
+                      /* Act on the event */
+                      if (videoType === 'youtube') {
+                        // Youtube
+                        youtubeVideo.init(videoId);
+                      } else {
+                        // modalVideo.showModal();
+                        // modalVideo.setupCloseModalBtn();
+                      }
+                    });
+                  }
+                },
+                setupCloseModalBtn() {
+                  const closeBtn = document.querySelector('.modal-overlap-container .btn-close');
+                  closeBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    modalVideo.hideModal();
+                  });
+                },
+                showModal() {
+                  const modalContainer = document.querySelector('.modal-overlap-container');
+                  const htmlTag = document.getElementsByTagName('html')[0];
+                  const bodyTag = document.body;
+                  modalContainer.classList.add('show');
+                  htmlTag.classList.add('fixed');
+                  bodyTag.classList.add('fixed');
+                },
+                hideModal() {
+                  const modalContainer = document.querySelector('.modal-overlap-container');
+                  const htmlTag = document.getElementsByTagName('html')[0];
+                  const bodyTag = document.body;
+                  modalContainer.classList.remove('show');
+                  htmlTag.classList.remove('fixed');
+                  bodyTag.classList.remove('fixed');
+              
+                  const playArea = document.querySelector('.modal-overlap-container .align-center');
+                  playArea.innerHTML = '<div id=\'player\'></div>';
+                },
+            };
+            modalVideo.init();
+            //video list
+            $('.video-list .list-title').click(function(){
+                const open = $(this).find('span').data('open');
+                const close = $(this).find('span').data('close');
+                if($(this).siblings('.list-content').hasClass('active')){
+                    $(this).find('span').text(open);
+                }else{
+                    $(this).find('span').text(close);
+                };
+                $(this).siblings('.list-content').toggleClass('active');
+            });
+
+
+
             card.on('mouse:down', function(opt) {
                 let evt = opt.e;
                 if (evt.altKey === true) {
@@ -375,12 +496,14 @@ const fabricFunction = (function () {
         },
         initPencelBox: (parentElement) => {
             //透明度
-            document.getElementById('v-opacity').addEventListener('input', (e) => {
-                const val= e.target.value/10;
-                e.target.nextElementSibling.getElementsByTagName('span')[0].textContent=val;
-                brushOpacity= val;
-                fabricFunction.setBrush();
+            const vRadios = document.getElementsByName('v-opacity');
+            Array.prototype.forEach.call(vRadios, (radio) => {
+                radio.addEventListener('change', changeHandler);
             });
+            function changeHandler(event) {
+                brushOpacity= this.value;
+                fabricFunction.setBrush();
+            }
             //粗細
             document.getElementById('v-width').addEventListener('input', (e) => {
                 const val= parseInt(e.target.value, 10);

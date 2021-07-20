@@ -9,7 +9,6 @@ body{
   overflow: initial !important;
   background-color: #000;
 }
-
 .section-master{
   background-color: #fff;
   position: relative;
@@ -114,8 +113,53 @@ body{
       border-radius: 5px;
     }
   }
+  .video-list{
+    z-index: 50;
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    background-color: rgba(45, 45, 45, .85);
+    padding: 5px 5px;
+    border-radius: 6px;
+    display: none;
+    .list-title{
+      @include unselect;
+      color: #fff;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 17px;
+    }
+    .list-content{
+      display: none;
+      padding: 5px 0 10px;
+      position: relative;
+      &.active{
+        display: block;
+      }
+      &:after{
+        content:"";
+        position: absolute;
+        width: 100%;
+        width: calc( 100% - 20px);
+        height: 1px;
+        border-bottom: 1px solid #fff;
+        left: 50%;
+        bottom: 5px;
+        transform: translate(-50%, 0);
+      }
+      .list-item{
+        @include unselect;
+        padding: 5px 10px;
+        color: #00b1e1;
+        cursor: pointer;
+        text-decoration: underline;
+        &:hover{
+          opacity: 0.9;
+        }
+      }
+    }
+  }
 }
-
 .popup-modal-section{
   position: fixed;
   top: 0;
@@ -226,31 +270,144 @@ body{
     }
   }
 }
-
-
 .input-group{
   display: flex;
   flex-direction: column;
   padding-bottom: 24px;
   .input-name{
+    @include unselect;
     flex: 0 0 auto;
     color: #fff;
     padding-bottom: 10px;
     font-size: 19px;
   }
   .input-group-content{
+    @include unselect;
     flex: 0 0 auto;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
     color: #fff;
+    &.input-group-content--column{
+      flex-direction: column;
+      align-items: flex-start;
+    }
     input{
       margin-right: 12px;
+      cursor: pointer;
     }
     label{
+      @include unselect;
       font-size: 18px;
       .v-value{
         margin-right: 5px;
+      }
+    }
+    .input-group-column-item{
+      flex: 0 0 auto;
+      margin-bottom: 8px;
+      margin-right: 20px;
+      display: flex;
+      align-items: center;
+      &:last-child{
+        margin-bottom: 0;
+      }
+      input{
+        margin-right: 10px;
+      }
+      label{
+        cursor: pointer;
+      }
+    }
+  }
+}
+.section-modal-video {
+  .modal-overlap-container {
+    left: 0;
+    position: fixed;
+    z-index: 999988;
+    display: block;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    max-height: 0;
+    transition: opacity .3s;
+    opacity: 0;
+    background-color: rgba(0, 0, 0, .7);
+
+    &.show {
+      top: 0;
+      max-height: 100vh;
+      opacity: 1;
+    }
+
+    > .container {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      width: 80vw;
+      margin: 0 auto;
+
+      .btn-close {
+        position: absolute;
+        z-index: 100;
+        top: 3%;
+        right: 2%;
+        width: 4%;
+        height: 4%;
+        min-width: 40px;
+        @media screen and (max-width: 767px) {
+          width: 10%;
+          height: 6%;
+        }
+        &:hover {
+          cursor: pointer;
+
+          .close-x {
+            transition: stroke .3s;
+            stroke: #f00;
+          }
+        }
+
+        .close-x {
+          stroke: #ffffff;
+          fill: transparent;
+          stroke-linecap: round;
+          stroke-width: 2;
+        }
+      }
+
+      .align-center {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+        margin-left: auto;
+        margin-right: auto;
+
+        @media screen and (max-height: 750px) and (min-aspect-ratio: 17/9) {
+          width: 100%*.8;
+          padding-bottom: 56.25%*.8;
+        }
+
+        #player {
+          @media screen and (max-width: 767px) {
+            width: 100% !important;
+            height: calc(52.625vw) !important;
+            position: absolute !important;
+          }
+        }
+
+        embed,
+        iframe,
+        object {
+          left: 0 ;
+          position: absolute;
+          top: 0;
+          width: 100%;
+          height: 100%;
+        }
       }
     }
   }
