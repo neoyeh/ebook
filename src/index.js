@@ -89,7 +89,7 @@ const fabricFunction = (function () {
         },
         initPlugin: (parentElement) => {
             card = new fabric.Canvas('fabric-canvas',{
-                isDrawingMode: false
+                isDrawingMode: true
             });
             //init page
             fabricFunction.initPage(( (activePage)?activePage:'0'), parentElement );
@@ -550,9 +550,19 @@ const fabricFunction = (function () {
             card.isDrawingMode= false;
             card.forEachObject(function(object){ 
                 object.selectable = true; 
+                object.hasControls = false,
                 object.hoverCursor= "move";
+                object.hoverCursor= 'url("../lib/img/eraser.png") 5 10, auto';
             });
             $('#btn-select').addClass('active').siblings('.active').removeClass('active');
+        },
+        toEraserMode: () => {
+            isReadMode= true;
+            card.isDrawingMode= false;
+            card.forEachObject(function(object){ 
+                object.selectable = true; 
+                object.hoverCursor= "move";
+            });
         },
         setEraser: () => {
             if(confirm('確定要刪除"選取"筆畫?')){
