@@ -34,7 +34,8 @@ const fabricFunction = (function () {
             height: 0
         },
         activePage= null,
-        isReadMode= true;
+        isReadMode= true,
+        isEraserMode= false;
     let defaultData= {
         "name": "name",
         "totalPage": 80,
@@ -225,7 +226,6 @@ const fabricFunction = (function () {
             });
             // add favorite
             document.getElementsByClassName('btn-add--favorite')[0].addEventListener('click', () => {
-                console.log('aad')
                 let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
                 const {backgroundImage, ...saveData} = card.toJSON();
                 if(data.favoritePage.length>=10){
@@ -240,7 +240,6 @@ const fabricFunction = (function () {
                     console.log(data)
                 };
             });
-
             // close favorite
             document.getElementsByClassName('popup-modal-section--favorite')[0].getElementsByClassName('btn-card-close')[0].addEventListener('click', () => {
                 $('.popup-modal-section--favorite').removeClass('active');
@@ -282,7 +281,11 @@ const fabricFunction = (function () {
             });
             // close pencel
             document.getElementsByClassName('popup-modal-section--pencil')[0].getElementsByClassName('btn-card-close')[0].addEventListener('click', () => {
-                fabricFunction.toDrawMode();
+                if(isEraserMode===false){
+                    fabricFunction.toDrawMode();
+                }else{
+                    $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
+                };
                 $('.popup-modal-section--pencil').removeClass('active');
             });
             // full screen
@@ -310,14 +313,6 @@ const fabricFunction = (function () {
                     card.clear();
                     fabricFunction.resetSize(parentElement);
                 }
-            });
-            //select mode
-            document.getElementById('btn-select').addEventListener('click', () => {
-                fabricFunction.toSelectMode();
-            });
-            //eraser
-            document.getElementById('btn-eraser').addEventListener('click', () => {
-                fabricFunction.setEraser();
             });
             // scale
             card.on('mouse:wheel', function(opt) { 
@@ -485,9 +480,6 @@ const fabricFunction = (function () {
                 case 39:
                     funcNext();
                     break;
-                case 46:
-                    fabricFunction.setEraser();
-                    break;
                 default:
                 }
             }, true);
@@ -520,57 +512,65 @@ const fabricFunction = (function () {
                     fabricFunction.setBrush();
                 });
             });
+            //橡皮擦
+            const vEraser = document.getElementById('v-eraser');
+            vEraser.addEventListener('change', (e) => {
+                if(e.target.checked){
+                    fabricFunction.toEraserMode();
+                }else{
+                    isEraserMode= false;
+                };
+            });
         },
         setBrush: () => {
             card.freeDrawingBrush.width = brushWidth;
             card.freeDrawingBrush.color = `rgba(${brushColor}, ${brushOpacity})`
         },
         toReadmode: () => {
+            console.log('toReadmode')
             isReadMode= true;
+            isEraserMode= false;
             card.isDrawingMode= false;
             card.forEachObject(function(object){ 
                 object.selectable = false; 
                 object.hoverCursor= "normal";
+                object.off('mousedown');
             });
+            card.off('selection:created');
             card.discardActiveObject().renderAll();
             $('#btn-read').addClass('active').siblings('.active').removeClass('active');
         },
         toDrawMode: () => {
+            console.log('toDrawMode')
             isReadMode= false;
             card.isDrawingMode= true;
             card.forEachObject(function(object){ 
                 object.selectable = false; 
                 object.hoverCursor= "normal";
+                object.off('mousedown');
             });
+            card.off('selection:created');
             card.discardActiveObject().renderAll();
             $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
         },
-        toSelectMode: () => {
-            isReadMode= true;
-            card.isDrawingMode= false;
-            card.forEachObject(function(object){ 
-                object.selectable = true; 
-                object.hasControls = false,
-                object.hoverCursor= "move";
-                object.hoverCursor= 'url("../lib/img/eraser.png") 5 10, auto';
-            });
-            $('#btn-select').addClass('active').siblings('.active').removeClass('active');
-        },
         toEraserMode: () => {
+            console.log('toEraserMode')
             isReadMode= true;
+            isEraserMode= true;
             card.isDrawingMode= false;
             card.forEachObject(function(object){ 
-                object.selectable = true; 
-                object.hoverCursor= "move";
-            });
-        },
-        setEraser: () => {
-            if(confirm('確定要刪除"選取"筆畫?')){
-                card.getActiveObjects().forEach((obj) => {
-                    card.remove(obj)
+                object.hasControls = false;
+                object.selectable = true;
+                object.hoverCursor= 'url("../lib/img/eraser.png") 5 10, auto';
+                object.off('mousedown').on('mousedown', (options) => {
+                    card.remove(options.target)
+                    card.discardActiveObject().renderAll();
                 });
-                card.discardActiveObject().renderAll();
-            };
+            });
+            card.on('selection:created', () => {
+                card.discardActiveObject();
+                card.requestRenderAll();
+            });
         }
     }
 
