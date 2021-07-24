@@ -42,28 +42,26 @@ const fabricFunction = (function () {
         "favoritePage": [0,1],
         "pageDetail": {},
         "pageLinkList": [
-            "./img/test-0.jpg",
-            "./img/test-1.jpg",
-            "./img/test-2.jpg",
-            "./img/test-3.jpg",
-            "./img/test-4.jpg",
-            "./img/test-5.jpg"
+            "./img/page01.jpg",
+            "./img/page02.jpg",
+            "./img/page03.jpg",
+            "./img/page04.jpg",
+            "./img/page05.jpg",
+            "./img/page06.jpg",
+            "./img/page07.jpg",
+            "./img/page08.jpg",
+            "./img/page09.jpg",
+            "./img/page10.jpg"
         ],
         "pageVideoList": {
-            "0":[
+            "6":[
                 {
-                    "title": "影片標題1",
-                    "vid": "X4zQ65e44Y8"
-                }
-            ],
-            "3":[
-                {
-                    "title": "影片標題4-1",
-                    "vid": "nExsxN_zSJM"
+                    "title": "第7頁 病歷1 X-ray",
+                    "vid": "zXj5XKw4F0A"
                 },
                 {
-                    "title": "影片標題4-2",
-                    "vid": "P6Rnwg1fhak"
+                    "title": "第7頁 病歷2 X-ray",
+                    "vid": "fCxJStlRtvU"
                 }
 
             ]
@@ -150,6 +148,9 @@ const fabricFunction = (function () {
                 // load data
                 console.log(data)
                 fabricFunction.imageUrl = url;
+                console.log(this)
+                console.log(this.width)
+                console.log(this.height)
                 fabricFunction.imageSize = {
                     width: this.width,
                     height: this.height,

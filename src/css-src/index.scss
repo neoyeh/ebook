@@ -152,9 +152,10 @@ body{
         padding: 5px 10px;
         color: #00b1e1;
         cursor: pointer;
-        text-decoration: underline;
-        &:hover{
+        &:hover,
+        &:active{
           opacity: 0.9;
+          text-decoration: underline;
         }
       }
     }
