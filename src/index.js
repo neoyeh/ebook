@@ -37,6 +37,7 @@ const fabricFunction = (function () {
         isReadMode= true,
         isEraserMode= false;
     let defaultData= {
+        "ver": "1.1",
         "name": "name",
         "totalPage": 80,
         "favoritePage": [0,1],
@@ -108,7 +109,6 @@ const fabricFunction = (function () {
         initFavorite: () =>{
             let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
             let html= '';
-            console.log(data)
             data.favoritePage.map((item, i)=>{
                 html+=`
                 <div class="catalog-item" data-page="${item}">
@@ -122,8 +122,12 @@ const fabricFunction = (function () {
         initPage: (page, parentElement) =>{
             card.clear();
             activePage= page;
-            let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+            // let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+            let data = (JSON.parse(localStorage.getItem('eBookData'))&&JSON.parse(localStorage.getItem('eBookData')).ver===defaultData.ver)?
+                JSON.parse(localStorage.getItem('eBookData')):defaultData;
+            localStorage.setItem('eBookData', JSON.stringify(data));
             console.log('initPage');
+            console.log(data)
             if(data.pageVideoList[page]){
                 let html= '';
                 for(let i=0; i<data.pageVideoList[page].length; i++){
@@ -146,11 +150,7 @@ const fabricFunction = (function () {
             const img = new Image();
             img.onload = function() {
                 // load data
-                console.log(data)
                 fabricFunction.imageUrl = url;
-                console.log(this)
-                console.log(this.width)
-                console.log(this.height)
                 fabricFunction.imageSize = {
                     width: this.width,
                     height: this.height,
@@ -174,13 +174,14 @@ const fabricFunction = (function () {
             const imageRatio = fabricFunction.imageSize.width/fabricFunction.imageSize.height;
             const windowRatio = windowW/windowH;
             const finialRatio = ( imageRatio > windowRatio )?windowW/fabricFunction.imageSize.width : windowH/fabricFunction.imageSize.height;
-            // parentElement.css({
-            //     width: finialRatio*fabricFunction.imageSize.width,
-            //     height: finialRatio*fabricFunction.imageSize.height
-            // });
             card.setWidth(finialRatio*fabricFunction.imageSize.width);
             card.setHeight(finialRatio*fabricFunction.imageSize.height);
+            // card.setWidth(windowW);
+            // card.setHeight(windowH);
+            console.log(finialRatio*fabricFunction.imageSize.width)
             card.setBackgroundImage(imageUrl, card.renderAll.bind(card), {
+                // top: (windowH/2) - (finialRatio*fabricFunction.imageSize.height/2),
+                // left: (windowW/2) - (finialRatio*fabricFunction.imageSize.width/2) ,
                 scaleX: finialRatio,
                 scaleY: finialRatio,
             });
@@ -202,6 +203,25 @@ const fabricFunction = (function () {
             fabricFunction.width = finialRatio*fabricFunction.imageSize.width;
         },
         initMasterBtn: (parentElement) => {
+            // card.on('mouse:down', function(event){
+            //     let pointer = card.getPointer(event.e);
+            //     let posiX = pointer.x;  
+            //     let posiY = pointer.y;  
+            //     posiX=Math.round( posiX );
+            //     posiY=Math.round( posiY );
+            //     console.log(posiX,posiY);
+
+            //     const circle = new fabric.Circle({ 
+            //         radius: 12, 
+            //         fill: '#f55', 
+            //         stroke: '#fff',
+            //         strokeWidth: 2,
+            //         top: posiY - 12, 
+            //         left: posiX - 12, 
+            //         hasControls: false,
+            //     });
+            //     card.add(circle);
+            // });
             // favorite
             document.getElementById('btn-favorite').addEventListener('click', () => {
                 $('.popup-modal-section--favorite').toggleClass('active');
@@ -494,8 +514,15 @@ const fabricFunction = (function () {
                 radio.addEventListener('change', changeHandler);
             });
             function changeHandler(event) {
-                brushOpacity= this.value;
-                fabricFunction.setBrush();
+                console.log(this.value)
+                const vEraser = document.getElementById('v-eraser');
+                if(this.value!=='eraser'){
+                    isEraserMode= false;
+                    brushOpacity= this.value;
+                    fabricFunction.setBrush();
+                }else{
+                    fabricFunction.toEraserMode();
+                }
             }
             //粗細
             document.getElementById('v-width').addEventListener('input', (e) => {
