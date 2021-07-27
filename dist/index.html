@@ -9,7 +9,7 @@
         <!-- <link rel="stylesheet" href="./lib/drawerJs/dist/drawerJs.css"> -->
         <link rel="stylesheet" href="./css/index.css">
     </head>
-    <body>
+    <body id="body">
         <section class="section-master" id="section-master">
             <div class="control-nav-tool">
                 <div class="prev" id="prev-page">
@@ -23,17 +23,19 @@
             <div class="master-block">
                 <div class="canvas-editor" id="canvas-editor" style="display: none;"></div>
                 <canvas class="fabric-canvas" id="fabric-canvas" width="300" height="300"></canvas>
-
-
             </div>
             <div class="master-tool">
                 <div class="tool-button" id="btn-catalog">
                     <i class="fa fa-list" aria-hidden="true"></i>
                     <div>目錄</div>
                 </div>
-                <div class="tool-button" id="btn-note">
+                <div class="tool-button" id="btn-add-note">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <div>新增便條紙</div>
+                </div>
+                <div class="tool-button" id="btn-toggle-note">
                     <i class="fa fa-sticky-note-o" aria-hidden="true"></i>
-                    <div>便條紙</div>
+                    <div><span class="show">顯示便條紙</span><span class="hide">隱藏便條紙</span></div>
                 </div>
                 <div class="tool-button" id="btn-favorite">
                     <i class="fa fa-star" aria-hidden="true"></i>
@@ -66,6 +68,27 @@
                 <div class="tool-button" id="btn-info">
                     <i class="fa fa-book" aria-hidden="true"></i>
                     <div>操作說明</div>
+                </div>
+            </div>
+            <div class="master-note">
+                <!-- <div class="note-toggle">
+                    <i class="fa fa-sticky-note-o" aria-hidden="true"></i>
+                </div> -->
+                <div class="note-content">
+                    <div class="note-title">
+                        便條紙
+                    </div>
+                    <div class="note-card">
+                        <div class="note-card-text"></div>
+                        <div class="note-card-btn-area">
+                            <div class="btn-note-form-edit">修改</div>
+                            <div class="btn-note-form-remove">刪除</div>
+                        </div>
+                    </div>
+                    <div class="note-form">
+                        <textarea class="note-textarea" name=note-textarea"" rows="20" cols="40" placeholder="請填入便條紙內容..." required></textarea>
+                        <div class="btn-note-form-submit">確定</div>
+                    </div>
                 </div>
             </div>
             <div class="video-list">
@@ -193,13 +216,15 @@
                         <div class="info-item txt-color-white">
                             基本功能：<br>
                             1. 點擊『目錄』子項目進入該頁面。<br>
-                            2. 點擊『書籤』可以新增、刪除和進入該頁面，最多新增十筆書籤。<br>
-                            3. 點擊『存檔』對整個畫面的筆畫進行存檔。<br>
-                            4. 滾動滑鼠滾輪可以放大和縮小畫面。<br>
-                            5. 『Alt+滑鼠拖曳』可以拖曳畫布。<br>
-                            6. 點擊『原尺寸』還原放大或縮小過的畫面。<br>
-                            7. 點擊『清空本頁畫布』刪除本頁所有的筆畫，並點擊『存檔』來儲存。<br>
-                            8. 點擊『全螢幕』視窗將視窗放到最大。
+                            2. 點擊『新增便條紙』可以新增便條紙。輸入內容並送出會『自動存檔』(包含未儲存的筆畫)，最多新增十筆。<br>
+                            3. 點擊『顯示便條紙』或『隱藏便條紙』可以顯示或隱藏所有便條紙。<br>
+                            4. 點擊『書籤』可以新增、刪除和進入該頁面，最多新增十筆。<br>
+                            5. 點擊『存檔』對整個畫面的筆畫進行存檔。<br>
+                            6. 滾動滑鼠滾輪可以放大和縮小畫面。<br>
+                            7. 『Alt+滑鼠拖曳』可以拖曳畫布。<br>
+                            8. 點擊『原尺寸』還原放大或縮小過的畫面。<br>
+                            9. 點擊『清空本頁畫布』刪除本頁所有的筆畫與便條紙並『自動存檔』。<br>
+                            10. 點擊『全螢幕』視窗將視窗放到最大。
                         </div>
                         <div class="info-item txt-color-white">
                             閱讀模式：<br>
@@ -207,15 +232,16 @@
                         </div>
                         <div class="info-item txt-color-white">
                             色筆模式：<br>
-                            1. 可以調整顏色、透明度與筆畫粗細。<br>
-                            2. 想要刪除筆畫需要進入『選取模式』選取想要刪除的筆畫並點擊『刪除已選取筆畫』或『Delete鍵』。<br>
-                            3. 完成筆畫、刪除筆畫或移動筆畫後需點選『存檔』保存紀錄。
+                            1. 進入色筆模式會『自動隱藏便條紙』。<br>
+                            2. 可以調整顏色與筆畫粗細。<br>
+                            3. 可以選擇想要使用哪種類型的筆或是橡皮擦。<br>
+                            4. 使用『橡皮擦』，將滑鼠移動到想要移除的筆畫上並點擊即可刪除筆畫。<br>
+                            5. 完成筆畫、或是使用完『橡皮擦』後需點選『存檔』保存紀錄。
                         </div>
                         <div class="info-item txt-color-white">
-                            選取模式：<br>
-                            1. 可選取筆畫並調整筆畫大小、位置。<br>
-                            2. 想要刪除筆畫需要進入『選取模式』選取想要刪除的筆畫並點擊『刪除已選取筆畫』。<br>
-                            3. 完成筆畫、刪除筆畫或移動筆畫後需點選『存檔』保存紀錄。
+                            便條紙注意事項：<br>
+                            1. 修改並送出後會『自動存檔』(包含未儲存的筆畫)。<br>
+                            2. 刪除後會『自動存檔』(包含未儲存的筆畫)。
                         </div>
                     </div>
                 </div>

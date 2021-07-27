@@ -35,13 +35,16 @@ const fabricFunction = (function () {
         },
         activePage= null,
         isReadMode= true,
-        isEraserMode= false;
+        addNote= false,
+        createNoteId= '',
+        showNote= false;
     let defaultData= {
-        "ver": "1.1",
+        "ver": "1.2",
         "name": "name",
         "totalPage": 80,
         "favoritePage": [0,1],
         "pageDetail": {},
+        "pageNoteDetail": {},
         "pageLinkList": [
             "./img/page01.jpg",
             "./img/page02.jpg",
@@ -120,6 +123,7 @@ const fabricFunction = (function () {
             $('.popup-modal-section--favorite').find('.catalog-content').html(html);
         },
         initPage: (page, parentElement) =>{
+            $('.master-note').removeClass('active create edit');
             card.clear();
             activePage= page;
             // let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
@@ -158,6 +162,7 @@ const fabricFunction = (function () {
                 if(data.pageDetail[`${page}`]){
                     card.loadFromJSON(data.pageDetail[`${page}`].objects, card.renderAll.bind(card));
                     fabricFunction.resetSize(parentElement, url, isload, data, page);
+                    fabricFunction.toogleNote(showNote);
                 }else{
                     fabricFunction.resetSize(parentElement, url, false, data, page);
                 };
@@ -203,27 +208,111 @@ const fabricFunction = (function () {
             fabricFunction.width = finialRatio*fabricFunction.imageSize.width;
         },
         initMasterBtn: (parentElement) => {
-            // card.on('mouse:down', function(event){
-            //     let pointer = card.getPointer(event.e);
-            //     let posiX = pointer.x;  
-            //     let posiY = pointer.y;  
-            //     posiX=Math.round( posiX );
-            //     posiY=Math.round( posiY );
-            //     console.log(posiX,posiY);
+            // add note
+            document.getElementById('btn-add-note').addEventListener('click', () => {
+                if($('#btn-add-note').hasClass('active')){
+                    fabricFunction.unSelectAll();
+                }else{
+                    fabricFunction.toogleNote(true);
+                    $('#btn-add-note').addClass('active').siblings('.tool-button.active').removeClass('active');
+                    addNote = true;
+                    
+                    card.off('mouse:down').on('mouse:down', function(event){
+                        if(addNote===true){
+                            addNote = false;
+                            let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+                            if(data.pageNoteDetail[`${activePage}`]===undefined){
+                                data.pageNoteDetail[`${activePage}`] = {};
+                            }
+                            let newLength = Object.keys(data.pageNoteDetail[`${activePage}`]).length;
+                            if(newLength>8){
+                                alert('超過最大數量 9筆');
+                                return false;
+                            }
+                            let id = new Date().valueOf().toString();
+                            createNoteId = id;
 
-            //     const circle = new fabric.Circle({ 
-            //         radius: 12, 
-            //         fill: '#f55', 
-            //         stroke: '#fff',
-            //         strokeWidth: 2,
-            //         top: posiY - 12, 
-            //         left: posiX - 12, 
-            //         hasControls: false,
-            //     });
-            //     card.add(circle);
-            // });
+                            let pointer = card.getPointer(event.e);
+                            let posiX = pointer.x;  
+                            let posiY = pointer.y;  
+                            posiX=Math.round( posiX );
+                            posiY=Math.round( posiY );
+
+                            const circle = new fabric.Circle({ 
+                                radius: 12, 
+                                fill: '#419bf9', 
+                                stroke: '#fff',
+                                strokeWidth: 2,
+                                top: posiY - 12, 
+                                left: posiX - 12, 
+                            });
+                            const text = new fabric.Text( `${id}` , {
+                                top: posiY - 8, 
+                                left: posiX - 3.5, 
+                                fontSize: 0,
+                                fill: '#fff',
+                                opacity: 0
+                            });
+                            let group = new fabric.Group([circle, text],{
+                                hasControls: false
+                            });
+                            $('.master-note').addClass('active edit create').attr({
+                                'data-id':id
+                            });
+                            $('.master-note .note-card-text').text('');
+                            $('.master-note .note-textarea').val('');
+
+                            card.setActiveObject(group);
+                            card.add(group);
+                            card.getObjects()[card.getObjects().length-1].lockMovementX  = true;
+                            card.getObjects()[card.getObjects().length-1].lockMovementY  = true;
+                            card.getObjects()[card.getObjects().length-1].hoverCursor= "pointer";
+                        }
+                    });
+                };
+            });
+            $('.master-note .btn-note-form-edit').on('click', function(){
+                $('.master-note').addClass('edit');
+            });
+            $('.master-note .btn-note-form-submit').on('click', function(){
+                let val = $('.master-note .note-textarea').val();
+                if($('.master-note .note-textarea').val()===''){
+                    confirm('請填入便條紙內容...')
+                }else{
+                    $('.master-note .note-card-text').text(val);
+                    $('.master-note .note-textarea').val(val);
+                    $('.master-note').removeClass('edit create');
+                    if(createNoteId===''){
+                        saveDataFunc('add', $('.master-note').attr('data-id'), val);
+                    }else{
+                        saveDataFunc('add', createNoteId, val);
+                        createNoteId='';
+                    }
+                    
+                };
+            });
+            $('.master-note .btn-note-form-remove').on('click', function(){
+                if(confirm('確定要刪除便條紙並存檔?')){
+                    let id = $('.master-note').attr('data-id');
+                    let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+                    console.log(id)
+                    card.remove(card.getActiveObject());
+                    saveDataFunc('remove', id);
+                };
+            });
+            //toggle note
+            $('#btn-toggle-note').on('click', function(){
+                fabricFunction.unSelectAll();
+                if(!$(this).hasClass('toggle')){
+                    fabricFunction.toogleNote(true);
+                }else{
+                    fabricFunction.toogleNote(false);
+                };
+            });
+
             // favorite
             document.getElementById('btn-favorite').addEventListener('click', () => {
+                fabricFunction.unSelectAll();
                 $('.popup-modal-section--favorite').toggleClass('active');
             });
             // favorite remove
@@ -267,6 +356,7 @@ const fabricFunction = (function () {
             });
             // catalog
             document.getElementById('btn-catalog').addEventListener('click', () => {
+                fabricFunction.unSelectAll();
                 $('.popup-modal-section--catalog').toggleClass('active');
             });
             // catalog click
@@ -287,41 +377,68 @@ const fabricFunction = (function () {
             });
             // save
             document.getElementById('btn-save').addEventListener('click', () => {
+                fabricFunction.unSelectAll();
+                saveDataFunc();
+            });
+            function saveDataFunc(type,noteId,noteText){
                 let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
                 const {backgroundImage, ...saveData} = card.toJSON();
-                console.log(data)
                 data.pageDetail[`${activePage}`]= {};
                 data.pageDetail[`${activePage}`]['objects']= saveData;
                 data.pageDetail[`${activePage}`]['windowScreen']= canvasSize;
-                // console.log(data)
+                switch (type) {
+                    case 'add':
+                        if(data.pageNoteDetail[`${activePage}`]===undefined){
+                            data.pageNoteDetail[`${activePage}`] = {};
+                        }
+                        // let newLength = Object.keys(data.pageNoteDetail[`${activePage}`]).length;
+                        data.pageNoteDetail[`${activePage}`][`${noteId}`]={
+                            id: noteId,
+                            text: (noteText)?noteText:''
+                        };
+                        break;
+                    case 'remove':
+                        delete data.pageNoteDetail[`${activePage}`][`${noteId}`];
+                        break;
+                    case 'removeAll':
+                        data.pageNoteDetail[`${activePage}`] = {};
+                        break;
+                    default:
+                }
+                console.log(data);
                 localStorage.setItem('eBookData', JSON.stringify(data));
-            });
+            };
             // pencel
             document.getElementById('btn-pencil').addEventListener('click', () => {
                 $('.popup-modal-section--pencil').toggleClass('active');
             });
             // close pencel
             document.getElementsByClassName('popup-modal-section--pencil')[0].getElementsByClassName('btn-card-close')[0].addEventListener('click', () => {
-                if(isEraserMode===false){
+                const vRadio = document.querySelector('input[name="v-opacity"]:checked').value;
+                if(vRadio!=='eraser'){
                     fabricFunction.toDrawMode();
                 }else{
-                    $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
+                    fabricFunction.toEraserMode();
                 };
+                $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
                 $('.popup-modal-section--pencil').removeClass('active');
             });
             // full screen
             document.getElementById('btn-fullscreen').addEventListener('click', () => {
-                let btnFullScreen= document.getElementById('section-master');
+                fabricFunction.unSelectAll();
+                let fullScreen= document.getElementById('body');
                 if (screenfull.isEnabled) {
-                    screenfull.toggle(btnFullScreen);
+                    screenfull.toggle(fullScreen);
                 }
             });
             // resize
             document.getElementById('btn-resize').addEventListener('click', () => {
+                fabricFunction.unSelectAll();
                 card.setViewportTransform([1,0,0,1,0,0]); 
             });
             // info
             document.getElementById('btn-info').addEventListener('click', () => {
+                fabricFunction.unSelectAll();
                 $('.popup-modal-section--info').toggleClass('active');
             });
             // close info
@@ -330,8 +447,12 @@ const fabricFunction = (function () {
             });
             // clear
             document.getElementById('btn-clear').addEventListener('click', () => {
-                if(confirm('確定要清除本頁筆記?')){
+                fabricFunction.unSelectAll();
+                if(confirm('確定要清除本頁筆記和便條紙?')){
                     card.clear();
+                    card.discardActiveObject();
+                    card.requestRenderAll();
+                    saveDataFunc('removeAll');
                     fabricFunction.resetSize(parentElement);
                 }
             });
@@ -442,6 +563,7 @@ const fabricFunction = (function () {
 
 
             card.on('mouse:down', function(opt) {
+                this.selection = false;
                 let evt = opt.e;
                 if (evt.altKey === true) {
                   this.isDragging = true;
@@ -517,7 +639,6 @@ const fabricFunction = (function () {
                 console.log(this.value)
                 const vEraser = document.getElementById('v-eraser');
                 if(this.value!=='eraser'){
-                    isEraserMode= false;
                     brushOpacity= this.value;
                     fabricFunction.setBrush();
                 }else{
@@ -540,15 +661,6 @@ const fabricFunction = (function () {
                     fabricFunction.setBrush();
                 });
             });
-            //橡皮擦
-            const vEraser = document.getElementById('v-eraser');
-            vEraser.addEventListener('change', (e) => {
-                if(e.target.checked){
-                    fabricFunction.toEraserMode();
-                }else{
-                    isEraserMode= false;
-                };
-            });
         },
         setBrush: () => {
             card.freeDrawingBrush.width = brushWidth;
@@ -556,49 +668,139 @@ const fabricFunction = (function () {
         },
         toReadmode: () => {
             console.log('toReadmode')
+            fabricFunction.unSelectAll();
             isReadMode= true;
-            isEraserMode= false;
             card.isDrawingMode= false;
             card.forEachObject(function(object){ 
-                object.selectable = false; 
-                object.hoverCursor= "normal";
-                object.off('mousedown');
+                if(object.type!=='group'){
+                    object.selectable = false; 
+                    object.hoverCursor= "normal";
+                    object.off('mousedown');
+                }else{
+                    object.selectable = true; 
+                    object.hoverCursor= "pointer";
+                    object.hasControls = false;
+                    object.lockMovementX  = true;
+                    object.lockMovementY  = true;
+                    card.bringToFront(object)
+                }
             });
-            card.off('selection:created');
-            card.discardActiveObject().renderAll();
+            
+            card.off('selection:created').on('selection:created', (object) => {
+                console.log('created')
+                if(object.selected.length>1||object.target.type!=="group"){
+                    card.discardActiveObject();
+                    card.requestRenderAll();
+                }else{
+                    // 新增note也會觸發selection:created 所以要判斷是不是新增的note
+                    let id = object.target._objects[1].text;
+                    if(createNoteId!==id){
+                        let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+                        let text = data.pageNoteDetail[`${activePage}`][`${id}`].text;
+                        $('.master-note').addClass('active').removeClass('edit');
+                        $('.master-note').attr('data-id', id);
+                        if(text){
+                            $('.master-note .note-card-text').text(text);
+                            $('.master-note .note-textarea').val(text);
+                        };
+                    };
+                };
+            });
+            card.off('selection:updated').on('selection:updated', (object) => {
+                console.log('update')
+                if(createNoteId===object.deselected[0]._objects[1].text){
+                    card.remove(object.deselected[0]);
+                }
+                let id = object.target._objects[1].text;
+                let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
+                let text = data.pageNoteDetail[`${activePage}`][`${id}`].text;
+                $('.master-note').addClass('active').removeClass('edit');
+                $('.master-note').attr('data-id', id);
+                if(text){
+                    $('.master-note .note-card-text').text(text);
+                    $('.master-note .note-textarea').val(text);
+                };
+            });
+            card.off('selection:cleared').on('selection:cleared', (object) => {
+                console.log('cleared')
+                $('.master-note').removeClass('active create');
+                console.log(object)
+                if(object.deselected&&object.deselected[0].type!=='path'){
+                    if(createNoteId===object.deselected[0]._objects[1].text){
+                        card.remove(object.deselected[0]);
+                    }
+                }
+                $('.master-note').removeAttr('data-id');
+                createNoteId= '';
+            });
             $('#btn-read').addClass('active').siblings('.active').removeClass('active');
         },
         toDrawMode: () => {
             console.log('toDrawMode')
+            fabricFunction.unSelectAll();
             isReadMode= false;
             card.isDrawingMode= true;
             card.forEachObject(function(object){ 
-                object.selectable = false; 
-                object.hoverCursor= "normal";
-                object.off('mousedown');
+                if(object.type!=='group'){
+                    object.selectable = false; 
+                    object.hoverCursor= "normal";
+                    object.off('mousedown');
+                }
             });
             card.off('selection:created');
+            card.off('selection:cleared');
             card.discardActiveObject().renderAll();
+            fabricFunction.toogleNote(false);
             $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
         },
         toEraserMode: () => {
             console.log('toEraserMode')
+            fabricFunction.unSelectAll();
             isReadMode= true;
-            isEraserMode= true;
             card.isDrawingMode= false;
             card.forEachObject(function(object){ 
-                object.hasControls = false;
-                object.selectable = true;
-                object.hoverCursor= 'url("../lib/img/eraser.png") 5 10, auto';
-                object.off('mousedown').on('mousedown', (options) => {
-                    card.remove(options.target)
-                    card.discardActiveObject().renderAll();
-                });
+                if(object.type!=='group'){
+                    object.hasControls = false;
+                    object.selectable = true;
+                    object.hoverCursor= 'url("../lib/img/eraser.png") 5 10, auto';
+                    object.off('mousedown').on('mousedown', (options) => {
+                        console.log(object)
+                        card.remove(options.target)
+                        card.discardActiveObject().renderAll();
+                    });
+                };
             });
-            card.on('selection:created', () => {
+            card.off('selection:cleared');
+            card.off('selection:created').on('selection:created', () => {
                 card.discardActiveObject();
                 card.requestRenderAll();
             });
+            fabricFunction.toogleNote(false);
+        },
+        unSelectAll: () => {
+            console.log('unselectall')
+            $('#btn-add-note').removeClass('active');
+            card.off('mouse:down');
+            card.discardActiveObject();
+            card.requestRenderAll();
+        },
+        toogleNote: (isShow) => {
+            let objects = card.getObjects();
+            if(isShow===true){
+                showNote= true;
+                $('#btn-toggle-note').addClass('toggle');
+                fabricFunction.toReadmode();
+            }else{
+                showNote= false;
+                $('#btn-toggle-note').removeClass('toggle');
+            }
+            for (var i in objects) {
+                if(objects[i].type==='group'){
+                    objects[i].opacity = (isShow===true)?1:0;
+                    card.bringToFront(objects[i])
+                };
+            };
+            card.requestRenderAll();
         }
     }
 
@@ -607,6 +809,5 @@ const fabricFunction = (function () {
 
 $(document).ready(function () {
     fullHeight.init();
-
     fabricFunction.init();
 });

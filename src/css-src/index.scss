@@ -31,6 +31,14 @@ body{
       transform: translate(-50%, -50%);
       z-index: 5;
     }
+    .note-card{
+      z-index: 10;
+      position: absolute;
+      background-color: #fff;
+      box-shadow: 0 0 4px 0 rgba(85, 77, 86, 0.4);
+      padding: 10px 10px;
+      color: #000;
+    }
   }
   .master-tool{
     position: absolute;
@@ -44,6 +52,7 @@ body{
     padding: 10px 20px;
     background-color: #666;
     .tool-button{
+      @include unselect;
       width: 100px;
       height: 60px;
       border-radius: 4px;
@@ -66,8 +75,133 @@ body{
         text-align: center;
         font-size: 14px;
       }
+      .show{
+        display: inline;
+      }
+      .hide{
+        display: none;
+      }
+      &.toggle{
+        .hide{
+          display: inline;
+        }
+        .show{
+          display: none;
+        }
+      }
       &.active{
         border-color: #fff;
+      }
+    }
+  }
+  .master-note{
+    background-color: #191919;
+    position: absolute;
+    height: calc( 100vh - 80px );
+    height: calc(var(--vh, 1vh) * 100 - 80px);
+    top: 0;
+    left: 0;
+    width: 320px;
+    color: #fff;
+    transition: transform 0.35s ease;
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    transform: translate(-320px, 0px);
+    &.active{
+      transform: translate(0, 0px);
+    }
+    .note-toggle{
+      border-radius: 0 5px 5px 0;
+      width: 30px;
+      height: 45px;
+      position: absolute;
+      left: 320px;
+      top: 30px;
+      background-color: #191919;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .note-content{
+      overflow-y: auto;
+      width: 100%;
+      padding: 12px 12px;
+      .note-title{
+        padding: 12px 6px;
+        font-size: 21px;
+        font-weight: 800;
+      }
+      .note-card{
+        padding: 12px 6px;
+        width: 100%;
+        .note-card-text{
+          width: 100%;
+          line-height: 1.5;
+          color: #eee;
+        }
+        .note-card-btn-area{
+          width: 100%;
+          text-align: right;
+          margin-top: 12px;
+          .btn-note-form-edit{
+            margin-left: 6px;
+            background-color: #d4541d;
+            border-radius: 8px;
+            padding: 6px 18px;
+            font-size: 15px;
+            cursor: pointer;
+            display: inline-block;
+          }
+          .btn-note-form-remove{
+            margin-left: 6px;
+            background-color: #ed5e68;
+            border-radius: 8px;
+            padding: 6px 18px;
+            font-size: 15px;
+            cursor: pointer;
+            display: inline-block;
+          }
+        }
+      }
+      .note-form{
+        text-align: right;
+        display: none;
+        .note-textarea{
+          max-width: 100%;
+          min-width: 100%;
+          background: #191919;
+          color: #eee;
+          font-size: 14px;
+          margin-bottom: 12px;
+        }
+        .btn-note-form-submit{
+          background-color: #5cb85c;
+          border-radius: 8px;
+          padding: 6px 18px;
+          font-size: 15px;
+          cursor: pointer;
+          display: inline-block;
+        }
+      }
+    }
+    &.edit{
+      .note-content{
+        .note-card{
+          display: none;
+        }
+        .note-form{
+          display: block;
+        }
+      }
+    }
+    &.create{
+      .note-card{
+        .note-card-btn-area{
+          .btn-note-form-remove{
+            display: none;
+          }
+        }
       }
     }
   }
