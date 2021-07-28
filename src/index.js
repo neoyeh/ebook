@@ -762,7 +762,7 @@ const fabricFunction = (function () {
                 if(object.type!=='group'){
                     object.hasControls = false;
                     object.selectable = true;
-                    object.hoverCursor= 'url("../lib/img/eraser.png") 5 10, auto';
+                    object.hoverCursor= 'url("./lib/img/eraser.png") 5 10, auto';
                     object.off('mousedown').on('mousedown', (options) => {
                         console.log(object)
                         card.remove(options.target)
