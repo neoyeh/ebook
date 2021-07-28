@@ -39,7 +39,7 @@ const fabricFunction = (function () {
         createNoteId= '',
         showNote= false;
     let defaultData= {
-        "ver": "1.2",
+        "ver": "1.3",
         "name": "name",
         "totalPage": 80,
         "favoritePage": [0,1],
@@ -61,13 +61,27 @@ const fabricFunction = (function () {
             "6":[
                 {
                     "title": "第7頁 病歷1 X-ray",
+                    "vid": "LgRtBwUKg2w"
+                },
+                {
+                    "title": "第7頁 病歷1 X-ray",
                     "vid": "zXj5XKw4F0A"
                 },
                 {
-                    "title": "第7頁 病歷2 X-ray",
+                    "title": "第7頁 病歷1 X-ray",
                     "vid": "fCxJStlRtvU"
                 }
 
+            ],
+            "8":[
+                {
+                    "title": "第9頁 病歷2 X-ray",
+                    "vid": "a6mCDvuSH64"
+                },
+                {
+                    "title": "第9頁 病歷2 X-ray",
+                    "vid": "oW3JPjGDgqw"
+                }
             ]
         },
     };
@@ -550,13 +564,6 @@ const fabricFunction = (function () {
             modalVideo.init();
             //video list
             $('.video-list .list-title').click(function(){
-                const open = $(this).find('span').data('open');
-                const close = $(this).find('span').data('close');
-                if($(this).siblings('.list-content').hasClass('active')){
-                    $(this).find('span').text(open);
-                }else{
-                    $(this).find('span').text(close);
-                };
                 $(this).siblings('.list-content').toggleClass('active');
             });
 
