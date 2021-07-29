@@ -39,7 +39,7 @@ const fabricFunction = (function () {
         createNoteId= '',
         showNote= false;
     let defaultData= {
-        "ver": "1.3",
+        "ver": "1.01",
         "name": "name",
         "totalPage": 80,
         "favoritePage": [0,1],
@@ -60,26 +60,18 @@ const fabricFunction = (function () {
         "pageVideoList": {
             "6":[
                 {
-                    "title": "第7頁 病歷1 X-ray",
-                    "vid": "LgRtBwUKg2w"
-                },
-                {
-                    "title": "第7頁 病歷1 X-ray",
-                    "vid": "zXj5XKw4F0A"
-                },
-                {
-                    "title": "第7頁 病歷1 X-ray",
+                    "title": "第7頁 病例1 MRI",
                     "vid": "fCxJStlRtvU"
                 }
 
             ],
             "8":[
                 {
-                    "title": "第9頁 病歷2 X-ray",
+                    "title": "第9頁 病例2 MRI",
                     "vid": "a6mCDvuSH64"
                 },
                 {
-                    "title": "第9頁 病歷2 X-ray",
+                    "title": "第9頁 病例2 X ray",
                     "vid": "oW3JPjGDgqw"
                 }
             ]
@@ -145,11 +137,9 @@ const fabricFunction = (function () {
                 JSON.parse(localStorage.getItem('eBookData')):defaultData;
             localStorage.setItem('eBookData', JSON.stringify(data));
             console.log('initPage');
-            console.log(data)
             if(data.pageVideoList[page]){
                 let html= '';
                 for(let i=0; i<data.pageVideoList[page].length; i++){
-                    console.log(data.pageVideoList[page][i])
                     html+=`
                         <div class="list-item play-modal-video-btn" data-vid="${data.pageVideoList[page][i].vid}" data-vtype="youtube">${data.pageVideoList[page][i].title}</div>
                     `;
@@ -197,7 +187,6 @@ const fabricFunction = (function () {
             card.setHeight(finialRatio*fabricFunction.imageSize.height);
             // card.setWidth(windowW);
             // card.setHeight(windowH);
-            console.log(finialRatio*fabricFunction.imageSize.width)
             card.setBackgroundImage(imageUrl, card.renderAll.bind(card), {
                 // top: (windowH/2) - (finialRatio*fabricFunction.imageSize.height/2),
                 // left: (windowW/2) - (finialRatio*fabricFunction.imageSize.width/2) ,
@@ -211,7 +200,6 @@ const fabricFunction = (function () {
             finialRatio*fabricFunction.imageSize.width / data.pageDetail[`${page}`].windowScreen.width;
 
             let objects = card.getObjects();
-            // console.log(objects)
             for (var i in objects) {
                 objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
                 objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
@@ -309,7 +297,6 @@ const fabricFunction = (function () {
                 if(confirm('確定要刪除便條紙並存檔?')){
                     let id = $('.master-note').attr('data-id');
                     let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
-                    console.log(id)
                     card.remove(card.getActiveObject());
                     saveDataFunc('remove', id);
                 };
@@ -335,14 +322,9 @@ const fabricFunction = (function () {
                     if( confirm('確定要刪除書籤?') ){
                         let page= $(e.target).closest('.catalog-item').data('page');
                         let data = JSON.parse(localStorage.getItem('eBookData'))||defaultData;
-                        console.log(data.favoritePage)
                         data.favoritePage= data.favoritePage.filter(item => {
-                            console.log('===')
-                            console.log(page)
-                            console.log(item)
                             return item !== page;
                         });
-                        console.log(data)
                         localStorage.setItem('eBookData', JSON.stringify(data));
                         fabricFunction.initFavorite();
                     }
@@ -361,7 +343,6 @@ const fabricFunction = (function () {
                     data.favoritePage.sort()
                     localStorage.setItem('eBookData', JSON.stringify(data));
                     fabricFunction.initFavorite();
-                    console.log(data)
                 };
             });
             // close favorite
@@ -419,7 +400,6 @@ const fabricFunction = (function () {
                         break;
                     default:
                 }
-                console.log(data);
                 localStorage.setItem('eBookData', JSON.stringify(data));
             };
             // pencel
@@ -474,13 +454,11 @@ const fabricFunction = (function () {
             card.on('mouse:wheel', function(opt) { 
                 opt.e.preventDefault(); 
                 opt.e.stopPropagation(); 
-                console.log(opt)
                 let delta = opt.e.deltaY; 
                 let zoom = card.getZoom(); 
                 zoom *= 0.999 ** delta; 
                 if (zoom > 2) zoom = 2 ; 
                 if (zoom < 0.8) zoom = 0.8; 
-                console.log(opt.e.offsetX)
                 card.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
 
                 // card.setZoom(zoom); 
@@ -602,7 +580,7 @@ const fabricFunction = (function () {
                 if( Number(activePage)-1 >= 0 ){
                     fabricFunction.initPage(  (Number(activePage)-1).toString(), parentElement );
                 }else{
-                    console.log('no prev')
+                    // console.log('no prev')
                 };
             };
             function funcNext(){
@@ -611,7 +589,7 @@ const fabricFunction = (function () {
                 if( Number(activePage)+1 < total ){
                     fabricFunction.initPage( (Number(activePage)+1).toString(), parentElement );
                 }else{
-                    console.log('no next');
+                    // console.log('no next');
                 };
             };
             //prev page
@@ -643,7 +621,6 @@ const fabricFunction = (function () {
                 radio.addEventListener('change', changeHandler);
             });
             function changeHandler(event) {
-                console.log(this.value)
                 const vEraser = document.getElementById('v-eraser');
                 if(this.value!=='eraser'){
                     brushOpacity= this.value;
@@ -731,7 +708,6 @@ const fabricFunction = (function () {
             card.off('selection:cleared').on('selection:cleared', (object) => {
                 console.log('cleared')
                 $('.master-note').removeClass('active create');
-                console.log(object)
                 if(object.deselected&&object.deselected[0].type!=='path'){
                     if(createNoteId===object.deselected[0]._objects[1].text){
                         card.remove(object.deselected[0]);
@@ -771,7 +747,6 @@ const fabricFunction = (function () {
                     object.selectable = true;
                     object.hoverCursor= 'url("./lib/img/eraser.png") 5 10, auto';
                     object.off('mousedown').on('mousedown', (options) => {
-                        console.log(object)
                         card.remove(options.target)
                         card.discardActiveObject().renderAll();
                     });
