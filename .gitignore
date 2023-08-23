@@ -9,7 +9,6 @@ __snapshots__/
 *.map
 *.lock
 .coverage
-package-lock.json
 logfile
 wip/pdp-ocean-life
 5g.code-workspace

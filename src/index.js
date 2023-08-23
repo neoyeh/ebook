@@ -42,7 +42,7 @@ const fabricFunction = (function () {
         "ver": "1.01",
         "name": "name",
         "totalPage": 80,
-        "favoritePage": [0,1],
+        "favoritePage": [],
         "pageDetail": {},
         "pageNoteDetail": {},
         "pageLinkList": [
@@ -55,24 +55,38 @@ const fabricFunction = (function () {
             "./img/page07.jpg",
             "./img/page08.jpg",
             "./img/page09.jpg",
-            "./img/page10.jpg"
+            "./img/page10.jpg",
+            "./img/page11.jpg",
+            "./img/page12.jpg",
+            "./img/page13.jpg",
+            "./img/page14.jpg",
+            "./img/page15.jpg",
+            "./img/page16.jpg",
+            "./img/page17.jpg",
+            "./img/page18.jpg"
         ],
         "pageVideoList": {
-            "6":[
+            "13":[
                 {
-                    "title": "第7頁 病例1 MRI",
-                    "vid": "fCxJStlRtvU"
+                    "title": "第14頁 病例1 MRI 譚 Judy 0811",
+                    "vid": "l7TjNgTcZ38"
                 }
 
             ],
-            "8":[
+            "15":[
                 {
-                    "title": "第9頁 病例2 MRI",
-                    "vid": "a6mCDvuSH64"
+                    "title": "第16頁 病例2 MR M37 合併 0811",
+                    "vid": "V2qHMj1pYBU"
+                }
+            ],
+            "17":[
+                {
+                    "title": "第18頁 病例3 1 X ray 宋 Judy 0811",
+                    "vid": "aQxURUjtE2M"
                 },
                 {
-                    "title": "第9頁 病例2 X ray",
-                    "vid": "oW3JPjGDgqw"
+                    "title": "第18頁 病例3 2 MRI 宋 Judy 0816",
+                    "vid": "qSkpCojNj-g"
                 }
             ]
         },
