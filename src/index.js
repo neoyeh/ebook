@@ -313,7 +313,7 @@ const fabricFunction = (function () {
                         saveDataFunc('add', createNoteId, val);
                         createNoteId='';
                     }
-                    
+                    fabricFunction.toReadmode();
                 };
             });
             $('.master-note .btn-note-form-remove').on('click', function(){
@@ -586,34 +586,7 @@ const fabricFunction = (function () {
 
 
 
-            card.on('mouse:down', function(opt) {
-                this.selection = false;
-                let evt = opt.e;
-                if (evt.altKey === true) {
-                  this.isDragging = true;
-                  this.selection = false;
-                  this.lastPosX = evt.clientX;
-                  this.lastPosY = evt.clientY;
-                }
-            });
-            card.on('mouse:move', function(opt) {
-                if (this.isDragging) {
-                    let e = opt.e;
-                    let vpt = this.viewportTransform;
-                    vpt[4] += e.clientX - this.lastPosX;
-                    vpt[5] += e.clientY - this.lastPosY;
-                    this.requestRenderAll();
-                    this.lastPosX = e.clientX;
-                    this.lastPosY = e.clientY;
-                }
-            });
-            card.on('mouse:up', function(opt) {
-                // on mouse up we want to recalculate new interaction
-                // for all objects, so we call setViewportTransform
-                this.setViewportTransform(this.viewportTransform);
-                this.isDragging = false;
-                this.selection = true;
-            });
+            
             
             function funcPrev(){
                 if( Number(activePage)-1 >= 0 ){
@@ -756,6 +729,35 @@ const fabricFunction = (function () {
                 createNoteId= '';
             });
             $('#btn-read').addClass('active').siblings('.active').removeClass('active');
+
+            card.off('mouse:down').on('mouse:down', function(opt) {
+                this.selection = false;
+                let evt = opt.e;
+                if (evt.altKey) {
+                  this.isDragging = true;
+                  this.selection = false;
+                  this.lastPosX = evt.clientX;
+                  this.lastPosY = evt.clientY;
+                }
+            });
+            card.off('mouse:move').on('mouse:move', function(opt) {
+                if (this.isDragging) {
+                    let e = opt.e;
+                    let vpt = this.viewportTransform;
+                    vpt[4] += e.clientX - this.lastPosX;
+                    vpt[5] += e.clientY - this.lastPosY;
+                    this.requestRenderAll();
+                    this.lastPosX = e.clientX;
+                    this.lastPosY = e.clientY;
+                }
+            });
+            card.off('mouse:up').on('mouse:up', function(opt) {
+                // on mouse up we want to recalculate new interaction
+                // for all objects, so we call setViewportTransform
+                this.setViewportTransform(this.viewportTransform);
+                this.isDragging = false;
+                this.selection = true;
+            });
         },
         toDrawMode: () => {
             // console.log('toDrawMode')
@@ -814,6 +816,7 @@ const fabricFunction = (function () {
             }else{
                 showNote= false;
                 $('#btn-toggle-note').removeClass('toggle');
+                fabricFunction.toReadmode();
             }
             for (var i in objects) {
                 if(objects[i].type==='group'){
