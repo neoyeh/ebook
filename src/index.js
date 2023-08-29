@@ -3,6 +3,8 @@
 // const $ = require( "jquery" )( window );
 
 import { fabric } from "fabric";
+import Plyr from 'plyr';
+
 
 
 const fullHeight = {
@@ -39,7 +41,7 @@ const fabricFunction = (function () {
         createNoteId= '',
         showNote= false;
     let defaultData= {
-        "ver": "1.01",
+        "ver": "1.02",
         "name": "name",
         "totalPage": 80,
         "favoritePage": [],
@@ -69,24 +71,28 @@ const fabricFunction = (function () {
             "13":[
                 {
                     "title": "第14頁 病例1 MRI 譚 Judy 0811",
-                    "vid": "l7TjNgTcZ38"
+                    "vid": "l7TjNgTcZ38",
+                    "link": "./video/1.mp4"
                 }
 
             ],
             "15":[
                 {
                     "title": "第16頁 病例2 MR M37 合併 0811",
-                    "vid": "V2qHMj1pYBU"
+                    "vid": "V2qHMj1pYBU",
+                    "link": "./video/2.mp4"
                 }
             ],
             "17":[
                 {
                     "title": "第18頁 病例3 1 X ray 宋 Judy 0811",
-                    "vid": "aQxURUjtE2M"
+                    "vid": "aQxURUjtE2M",
+                    "link": "./video/3-1.mp4"
                 },
                 {
                     "title": "第18頁 病例3 2 MRI 宋 Judy 0816",
-                    "vid": "qSkpCojNj-g"
+                    "vid": "qSkpCojNj-g",
+                    "link": "./video/3-2.mp4"
                 }
             ]
         },
@@ -150,12 +156,15 @@ const fabricFunction = (function () {
             let data = (JSON.parse(localStorage.getItem('eBookData'))&&JSON.parse(localStorage.getItem('eBookData')).ver===defaultData.ver)?
                 JSON.parse(localStorage.getItem('eBookData')):defaultData;
             localStorage.setItem('eBookData', JSON.stringify(data));
-            console.log('initPage');
+            // console.log('initPage');
             if(data.pageVideoList[page]){
                 let html= '';
                 for(let i=0; i<data.pageVideoList[page].length; i++){
-                    html+=`
-                        <div class="list-item play-modal-video-btn" data-vid="${data.pageVideoList[page][i].vid}" data-vtype="youtube">${data.pageVideoList[page][i].title}</div>
+                    // html+=`
+                    //     <div class="list-item play-modal-video-btn" data-vid="${data.pageVideoList[page][i].vid}" data-vtype="youtube">${data.pageVideoList[page][i].title}</div>
+                    // `;
+                     html+=`
+                        <div class="list-item play-modal-video-btn" data-vid="${data.pageVideoList[page][i].link}">${data.pageVideoList[page][i].title}</div>
                     `;
                 }
                 $('.video-list').show();
@@ -486,7 +495,7 @@ const fabricFunction = (function () {
                     function onPlayerReady(event) {
                         event.target.playVideo();
                         modalVideo.showModal();
-                        modalVideo.setupCloseModalBtn();
+                        // modalVideo.setupCloseModalBtn();
                     }
                     function onPlayerStateChange(event) {
                         if (event.data === 0) {
@@ -494,7 +503,7 @@ const fabricFunction = (function () {
                         }
                     }
                     function onYouTubePlayerAPIReady() {
-                        playerIgnored = new YT.Player('player', {
+                        playerIgnored = new YT.Player('player-content', {
                             height: '390',
                             width: '640',
                             videoId: vid,
@@ -507,9 +516,24 @@ const fabricFunction = (function () {
                     onYouTubePlayerAPIReady();
                 },
             };
+            const plyrVideo = {
+                init(vid) {
+                    let html = '';
+                    html+=
+                        `<video id="player" playsinline controls>
+                            <source src="${vid}" type="video/mp4" />
+                        </video>`;
+                    $('#player-content').html(html);
+                    const player = new Plyr('#player');
+
+                    modalVideo.showModal();
+                    // modalVideo.setupCloseModalBtn();
+                }
+            }
             const modalVideo = {
                 init() {
                   const modalVideoBlock = document.querySelectorAll('.play-modal-video-btn');
+                  modalVideo.setupCloseModalBtn();
                   if (modalVideoBlock) {
                     $(document).on('click','.play-modal-video-btn', (e)=>{
                       e.preventDefault();
@@ -520,6 +544,7 @@ const fabricFunction = (function () {
                         // Youtube
                         youtubeVideo.init(videoId);
                       } else {
+                        plyrVideo.init(videoId);
                         // modalVideo.showModal();
                         // modalVideo.setupCloseModalBtn();
                       }
@@ -550,7 +575,7 @@ const fabricFunction = (function () {
                   bodyTag.classList.remove('fixed');
               
                   const playArea = document.querySelector('.modal-overlap-container .align-center');
-                  playArea.innerHTML = '<div id=\'player\'></div>';
+                  playArea.innerHTML = '<div id=\'player-content\'></div>';
                 },
             };
             modalVideo.init();
@@ -665,7 +690,7 @@ const fabricFunction = (function () {
             card.freeDrawingBrush.color = `rgba(${brushColor}, ${brushOpacity})`
         },
         toReadmode: () => {
-            console.log('toReadmode')
+            // console.log('toReadmode')
             fabricFunction.unSelectAll();
             isReadMode= true;
             card.isDrawingMode= false;
@@ -685,7 +710,7 @@ const fabricFunction = (function () {
             });
             
             card.off('selection:created').on('selection:created', (object) => {
-                console.log('created')
+                // console.log('created')
                 if(object.selected.length>1||object.target.type!=="group"){
                     card.discardActiveObject();
                     card.requestRenderAll();
@@ -705,7 +730,7 @@ const fabricFunction = (function () {
                 };
             });
             card.off('selection:updated').on('selection:updated', (object) => {
-                console.log('update')
+                // console.log('update')
                 if(createNoteId===object.deselected[0]._objects[1].text){
                     card.remove(object.deselected[0]);
                 }
@@ -720,7 +745,7 @@ const fabricFunction = (function () {
                 };
             });
             card.off('selection:cleared').on('selection:cleared', (object) => {
-                console.log('cleared')
+                // console.log('cleared')
                 $('.master-note').removeClass('active create');
                 if(object.deselected&&object.deselected[0].type!=='path'){
                     if(createNoteId===object.deselected[0]._objects[1].text){
@@ -733,7 +758,7 @@ const fabricFunction = (function () {
             $('#btn-read').addClass('active').siblings('.active').removeClass('active');
         },
         toDrawMode: () => {
-            console.log('toDrawMode')
+            // console.log('toDrawMode')
             fabricFunction.unSelectAll();
             isReadMode= false;
             card.isDrawingMode= true;
@@ -751,7 +776,7 @@ const fabricFunction = (function () {
             $('#btn-pencil').addClass('active').siblings('.active').removeClass('active');
         },
         toEraserMode: () => {
-            console.log('toEraserMode')
+            // console.log('toEraserMode')
             fabricFunction.unSelectAll();
             isReadMode= true;
             card.isDrawingMode= false;
@@ -774,7 +799,7 @@ const fabricFunction = (function () {
             fabricFunction.toogleNote(false);
         },
         unSelectAll: () => {
-            console.log('unselectall')
+            // console.log('unselectall')
             $('#btn-add-note').removeClass('active');
             card.off('mouse:down');
             card.discardActiveObject();
