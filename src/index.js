@@ -41,7 +41,7 @@ const fabricFunction = (function () {
         createNoteId= '',
         showNote= false;
     let defaultData= {
-        "ver": "1.02",
+        "ver": "1.03",
         "name": "name",
         "totalPage": 80,
         "favoritePage": [],
@@ -70,7 +70,7 @@ const fabricFunction = (function () {
         "pageVideoList": {
             "13":[
                 {
-                    "title": "第14頁 病例1 MRI 譚 Judy 0811",
+                    "title": "病例1（nr-axSpA，薦腸關節炎）",
                     "vid": "l7TjNgTcZ38",
                     "link": "./video/1.mp4"
                 }
@@ -78,19 +78,19 @@ const fabricFunction = (function () {
             ],
             "15":[
                 {
-                    "title": "第16頁 病例2 MR M37 合併 0811",
+                    "title": "病例2（nr-axSpA）",
                     "vid": "V2qHMj1pYBU",
                     "link": "./video/2.mp4"
                 }
             ],
             "17":[
                 {
-                    "title": "第18頁 病例3 1 X ray 宋 Judy 0811",
+                    "title": "病例3（X-ray，nr-axSpA，薦腸關節炎、著骨典病變）",
                     "vid": "aQxURUjtE2M",
                     "link": "./video/3-1.mp4"
                 },
                 {
-                    "title": "第18頁 病例3 2 MRI 宋 Judy 0816",
+                    "title": "病例3（MRI，nr-axSpA，薦腸關節炎、著骨典病變）",
                     "vid": "qSkpCojNj-g",
                     "link": "./video/3-2.mp4"
                 }
