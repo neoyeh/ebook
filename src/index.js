@@ -41,14 +41,13 @@ const fabricFunction = (function () {
         createNoteId= '',
         showNote= false;
     let defaultData= {
-        "ver": "1.05",
+        "ver": "1.06",
         "name": "name",
         "totalPage": 80,
         "favoritePage": [],
         "pageDetail": {},
         "pageNoteDetail": {},
         "pageLinkList": [
-            "./img/page00cover.jpg",
             "./img/page00.jpg",
             "./img/page01.jpg",
             "./img/page02.jpg",
@@ -67,10 +66,11 @@ const fabricFunction = (function () {
             "./img/page15.jpg",
             "./img/page16.jpg",
             "./img/page17.jpg",
-            "./img/page18.jpg"
+            "./img/page18.jpg",
+            "./img/page19.jpg",
         ],
         "pageVideoList": {
-            "15":[
+            "14":[
                 {
                     "title": "病例1（nr-axSpA，薦腸關節炎）",
                     "vid": "l7TjNgTcZ38",
@@ -78,14 +78,14 @@ const fabricFunction = (function () {
                 }
 
             ],
-            "17":[
+            "16":[
                 {
                     "title": "病例2（nr-axSpA）",
                     "vid": "V2qHMj1pYBU",
                     "link": "./video/2.mp4"
                 }
             ],
-            "19":[
+            "18":[
                 {
                     "title": "病例3（X-ray，nr-axSpA，薦腸關節炎、著骨點病變）",
                     "vid": "aQxURUjtE2M",
