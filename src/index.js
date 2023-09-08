@@ -41,13 +41,15 @@ const fabricFunction = (function () {
         createNoteId= '',
         showNote= false;
     let defaultData= {
-        "ver": "1.03",
+        "ver": "1.05",
         "name": "name",
         "totalPage": 80,
         "favoritePage": [],
         "pageDetail": {},
         "pageNoteDetail": {},
         "pageLinkList": [
+            "./img/page00cover.jpg",
+            "./img/page00.jpg",
             "./img/page01.jpg",
             "./img/page02.jpg",
             "./img/page03.jpg",
@@ -68,7 +70,7 @@ const fabricFunction = (function () {
             "./img/page18.jpg"
         ],
         "pageVideoList": {
-            "13":[
+            "15":[
                 {
                     "title": "病例1（nr-axSpA，薦腸關節炎）",
                     "vid": "l7TjNgTcZ38",
@@ -76,21 +78,21 @@ const fabricFunction = (function () {
                 }
 
             ],
-            "15":[
+            "17":[
                 {
                     "title": "病例2（nr-axSpA）",
                     "vid": "V2qHMj1pYBU",
                     "link": "./video/2.mp4"
                 }
             ],
-            "17":[
+            "19":[
                 {
-                    "title": "病例3（X-ray，nr-axSpA，薦腸關節炎、著骨典病變）",
+                    "title": "病例3（X-ray，nr-axSpA，薦腸關節炎、著骨點病變）",
                     "vid": "aQxURUjtE2M",
                     "link": "./video/3-1.mp4"
                 },
                 {
-                    "title": "病例3（MRI，nr-axSpA，薦腸關節炎、著骨典病變）",
+                    "title": "病例3（MRI，nr-axSpA，薦腸關節炎、著骨點病變）",
                     "vid": "qSkpCojNj-g",
                     "link": "./video/3-2.mp4"
                 }
